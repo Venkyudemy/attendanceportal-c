@@ -35,13 +35,7 @@ server {
 
     # Proxy API requests to backend container
     location /api/ {
-        # Use environment variable or fallback to service name
-        set $backend_host ${BACKEND_PRIVATE_IP};
-        if ($backend_host = "") {
-            set $backend_host "attendence-backend";
-        }
-        
-        proxy_pass http://$backend_host:5000;
+        proxy_pass http://attendence-backend:5000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
