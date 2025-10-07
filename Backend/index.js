@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const path = require('path');
 
 const app = express();
+// Trust proxy so secure cookies and protocol are detected behind Nginx/SSL
+app.set('trust proxy', 1);
 const PORT = process.env.PORT || 5000;
 
 // Import routes
@@ -19,8 +21,15 @@ const Employee = require('./models/Employee');
 const bcrypt = require('bcryptjs');
 
 // CORS configuration - More flexible for production
+const allowedOrigins = [
+  'https://localhost',
+  'http://localhost:3000',
+  'http://localhost',
+  process.env.FRONTEND_ORIGIN || ''
+].filter(Boolean);
+
 const corsOptions = {
-  origin: true, // Allow all origins temporarily for debugging
+  origin: (origin, cb) => cb(null, !origin || allowedOrigins.includes(origin)),
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']

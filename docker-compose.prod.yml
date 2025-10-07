@@ -13,8 +13,8 @@ services:
     depends_on:
       - backend
     environment:
-      # Updated with actual server IP address
-      - REACT_APP_API_URL=http://10.140.94.16:5000/api
+      # Use same-origin API via Nginx proxy
+      - REACT_APP_API_URL=/api
       - TZ=Asia/Kolkata
     restart: unless-stopped
     networks:
