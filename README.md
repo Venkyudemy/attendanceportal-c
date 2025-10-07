@@ -1,374 +1,291 @@
-# 🕛 Attendance Portal with Daily Reset
+# 📸 Attendance Portal with Camera Feature
 
-A comprehensive employee attendance management system with **automatic daily reset functionality** that runs at 12:00 AM every day.
+A comprehensive attendance management system with **camera capture functionality** for employee check-in and check-out verification.
 
 ## 🎯 **Features**
 
-### **🕛 Daily Reset System**
-- **Automatic Reset**: Runs every day at 12:00 AM (midnight)
-- **Manual Reset**: Admin-controlled reset for testing
-- **Force Reset**: Emergency reset for critical situations
-- **Status Monitoring**: Real-time reset status dashboard
-- **Timezone Support**: Configurable timezone settings
+### **Core Functionality**
+- ✅ **Employee Management** - Add, edit, delete employees
+- ✅ **Attendance Tracking** - Check-in/check-out with timestamps
+- ✅ **Leave Management** - Request and approve leaves
+- ✅ **Payroll Integration** - Automatic salary calculations
+- ✅ **Admin Dashboard** - Comprehensive analytics and reports
 
-### **✅ Employee Portal**
-- **Check-in/Check-out**: Daily attendance tracking
-- **Duplicate Prevention**: One check-in per day per employee
-- **Status Messages**: Real-time feedback and notifications
-- **Responsive Design**: Works on all devices
-- **Leave Management**: Request and track leave
-
-### **👑 Admin Portal**
-- **Employee Management**: Add, edit, and manage employees
-- **Attendance Monitoring**: Real-time attendance tracking
-- **Reset Controls**: Manual and force reset options
-- **Statistics Dashboard**: Comprehensive attendance analytics
-- **Leave Approval**: Approve/reject leave requests
-
-### **🐳 Docker Support**
-- **Production Ready**: Optimized Docker containers
-- **Easy Deployment**: One-command deployment
-- **Health Checks**: Automated health monitoring
-- **Scalable**: Microservices architecture
+### **📸 Camera Feature (NEW!)**
+- ✅ **Camera Capture** - Automatic camera opening on check-in/check-out
+- ✅ **Image Storage** - JPG format with 5MB limit
+- ✅ **Database Integration** - Image paths stored in MongoDB
+- ✅ **Admin Viewer** - Dedicated page to view all attendance photos
+- ✅ **Employee Folders** - Organized storage by employee ID
+- ✅ **Docker Support** - Persistent volume storage
 
 ## 🚀 **Quick Start**
 
-### **Option 1: Docker Deployment (Recommended)**
+### **Prerequisites**
+- Node.js (v14+)
+- MongoDB
+- Docker (optional)
 
-#### **Windows:**
+### **Local Development**
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Venkyudemy/attendanceportal-c.git
+   cd attendanceportal-c
+   ```
+
+2. **Start Backend**
+   ```bash
+   cd Backend
+   npm install
+   npm start
+   ```
+
+3. **Start Frontend**
+   ```bash
+   cd Frontend
+   npm install
+   npm start
+   ```
+
+4. **Access the application**
+   - Frontend: http://localhost:3000
+   - Backend API: http://localhost:5000
+
+### **Docker Deployment**
+
 ```bash
-# Clone the repository
-git clone https://github.com/Venkyudemy/attendanceportal-main.git
-cd attendanceportal-main
+# Development
+docker-compose up --build -d
 
-# Run Docker deployment
-docker-start.bat
+# Production
+docker-compose -f docker-compose.prod.yml up --build -d
 ```
 
-#### **Linux/Mac:**
-```bash
-# Clone the repository
-git clone https://github.com/Venkyudemy/attendanceportal-main.git
-cd attendanceportal-main
+## 📱 **How It Works**
 
-# Make script executable and run
-chmod +x docker-start.sh
-./docker-start.sh
-```
+### **Employee Check-in/Check-out with Camera**
+1. Employee clicks "Check In" or "Check Out"
+2. Camera automatically opens
+3. Live preview shows employee
+4. Click "Capture Photo" to take picture
+5. Confirm or retake photo
+6. Photo saved to server and database
+7. Attendance recorded with timestamp
 
-### **Option 2: Manual Development Setup**
-
-#### **Backend Setup:**
-```bash
-cd Backend
-npm install
-npm start
-```
-
-#### **Frontend Setup:**
-```bash
-cd Frontend
-npm install
-npm start
-```
-
-#### **Database Setup:**
-```bash
-# Install MongoDB locally or use Docker
-docker run -d -p 27017:27017 --name mongodb mongo:6.0
-```
-
-## 📋 **Prerequisites**
-
-### **For Docker Deployment:**
-- Docker Desktop (Windows/Mac) or Docker Engine (Linux)
-- Docker Compose
-- Git
-
-### **For Manual Setup:**
-- Node.js 18+
-- MongoDB 6.0+
-- Git
-
-## 🔧 **Configuration**
-
-### **Environment Variables**
-
-#### **Backend (.env):**
-```env
-NODE_ENV=production
-MONGODB_URI=mongodb://localhost:27017/attendanceportal
-PORT=5000
-JWT_SECRET=your-super-secret-jwt-key
-TZ=UTC
-
-# Daily Reset Configuration
-DAILY_RESET_ENABLED=true
-DAILY_RESET_TIME=00:00
-DAILY_RESET_TIMEZONE=UTC
-```
-
-#### **Frontend (.env):**
-```env
-REACT_APP_API_URL=http://localhost:5000/api
-REACT_APP_DAILY_RESET_ENABLED=true
-```
+### **Admin Photo Management**
+1. Login as admin
+2. Navigate to "📸 Attendance Images"
+3. View all employee photos in table format
+4. Filter by date
+5. Click photos to view full-size
+6. Green border = Check-in photos
+7. Red border = Check-out photos
 
 ## 🏗️ **Architecture**
 
 ```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Frontend      │    │    Backend      │    │    MongoDB      │
-│   (React)       │◄──►│   (Node.js)     │◄──►│   (Database)    │
-│   Port: 3000    │    │   Port: 5000    │    │   Port: 27017   │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-```
+Frontend (React.js)
+├── CameraCapture component
+├── EmployeePortal with camera integration
+├── AttendanceImages admin panel
+└── Responsive UI
 
-### **Components:**
-- **Frontend**: React.js with responsive UI
-- **Backend**: Node.js/Express.js REST API
-- **Database**: MongoDB with Mongoose ODM
-- **Daily Reset**: Automated scheduling system
+Backend (Node.js + Express)
+├── Multer file upload middleware
+├── MongoDB with image paths
+├── Employee-specific folder structure
+└── RESTful APIs
+
+Database (MongoDB)
+├── Employee collection with attendance
+├── Image paths in attendance records
+└── Persistent image metadata
+
+Storage
+├── /uploads/employees/{employeeId}/
+├── checkin_YYYY-MM-DD_HH-MM-SS.jpg
+└── checkout_YYYY-MM-DD_HH-MM-SS.jpg
+```
 
 ## 📊 **API Endpoints**
 
-### **Authentication:**
-- `POST /api/auth/login` - User login
-- `POST /api/auth/register` - User registration
+### **Camera & Images**
+- `POST /api/employee/:id/check-in-with-image` - Upload check-in photo
+- `POST /api/employee/:id/check-out-with-image` - Upload check-out photo
+- `GET /api/employee/attendance` - Get attendance with image paths
+- `GET /uploads/employees/:id/:filename` - Serve image files
 
-### **Employee Management:**
-- `GET /api/employee/attendance` - Get all employees
-- `POST /api/employee/:id/check-in` - Employee check-in
-- `POST /api/employee/:id/check-out` - Employee check-out
-- `GET /api/employee/:id/portal-data` - Employee portal data
+### **Core APIs**
+- `POST /api/auth/login` - User authentication
+- `GET /api/employee/details/:id` - Employee details
+- `POST /api/employee/:id/check-in` - Regular check-in
+- `POST /api/employee/:id/check-out` - Regular check-out
 
-### **Daily Reset:**
-- `POST /api/employee/manual-daily-reset` - Manual reset
-- `POST /api/employee/force-reset` - Force reset
-- `GET /api/employee/reset-status` - Reset status
+## 🐳 **Docker Configuration**
 
-### **Leave Management:**
-- `POST /api/leave` - Create leave request
-- `GET /api/leave/employee/:id` - Get employee leave requests
-- `PATCH /api/leave/:id/status` - Update leave status
+### **Updated Docker Compose Files**
+- ✅ `docker-compose.yml` - Development with camera support
+- ✅ `docker-compose.prod.yml` - Production with persistent volumes
+- ✅ `docker-compose.external.yml` - External deployment
+
+### **Key Docker Features**
+- **Persistent Image Storage** - `uploads_data` volume
+- **File Upload Limits** - 5MB maximum
+- **Proper Permissions** - 755 for upload directories
+- **Multi-environment Support** - Dev, prod, external configs
+
+## 📁 **File Structure**
+
+```
+attendanceportal-c/
+├── Backend/
+│   ├── config/multer.js          # Image upload configuration
+│   ├── models/Employee.js        # Database schema with image fields
+│   ├── routes/employee.js        # Camera API endpoints
+│   ├── uploads/employees/        # Image storage (Docker volume)
+│   └── verify-database-images.js # Database verification script
+├── Frontend/
+│   ├── src/components/
+│   │   ├── shared/CameraCapture.js    # Camera component
+│   │   ├── admin/AttendanceImages.js  # Admin photo viewer
+│   │   └── employee/EmployeePortal.js # Employee interface
+│   └── src/App.js               # Updated with camera routes
+├── docker-compose.yml           # Updated with camera support
+└── README.md                   # This file
+```
+
+## 🔧 **Configuration**
+
+### **Environment Variables**
+```bash
+# Backend
+NODE_ENV=production
+PORT=5000
+MONGODB_URI=mongodb://localhost:27017/attendanceportal
+MAX_FILE_SIZE=5242880
+UPLOAD_PATH=/app/uploads
+
+# Frontend
+REACT_APP_API_URL=http://localhost:5000/api
+```
+
+### **MongoDB Schema**
+```javascript
+{
+  name: "Employee Name",
+  email: "employee@company.com",
+  attendance: {
+    today: {
+      date: "2025-10-06",
+      checkIn: "09:00 AM",
+      checkInImage: "/uploads/employees/123/checkin_2025-10-06_09-00-00.jpg",
+      checkOut: "05:00 PM",
+      checkOutImage: "/uploads/employees/123/checkout_2025-10-06_17-00-00.jpg",
+      status: "Present",
+      hours: 8.0
+    },
+    records: [
+      {
+        date: "2025-10-06",
+        checkIn: "09:00 AM",
+        checkInImage: "/uploads/employees/123/checkin_2025-10-06_09-00-00.jpg",
+        checkOut: "05:00 PM", 
+        checkOutImage: "/uploads/employees/123/checkout_2025-10-06_17-00-00.jpg",
+        status: "Present",
+        hours: 8.0
+      }
+    ]
+  }
+}
+```
 
 ## 🧪 **Testing**
 
-### **Automated Testing:**
+### **Verify Camera Feature**
 ```bash
-# Run daily reset tests
-node test-daily-reset-enhanced.js
-
-# Run backend tests
+# Test database storage
 cd Backend
-npm test
+node verify-database-images.js
 
-# Run frontend tests
-cd Frontend
-npm test
+# Test Docker deployment
+docker-compose up --build -d
+docker exec -it container_name find /app/uploads -name "*.jpg"
 ```
 
-### **Manual Testing:**
-1. **Start the system** using Docker or manual setup
-2. **Access frontend** at http://localhost:80 (Docker) or http://localhost:3000 (dev)
-3. **Test check-in/check-out** functionality
-4. **Use admin portal** to test reset controls
-5. **Monitor logs** for daily reset activity
+### **Test Image Upload**
+1. Employee checks in with camera
+2. Verify image saved to `/uploads/employees/{id}/`
+3. Check MongoDB for image paths
+4. View in admin panel "Attendance Images"
 
-## 📈 **Monitoring**
+## 📈 **Performance**
 
-### **Health Checks:**
-```bash
-# Backend health
-curl http://localhost:5000/api/health
-
-# Daily reset status
-curl http://localhost:5000/api/employee/reset-status
-
-# Frontend health
-curl http://localhost:80
-```
-
-### **Logs:**
-```bash
-# Docker logs
-docker-compose logs -f
-
-# Daily reset logs
-docker-compose logs -f backend | grep "Daily reset"
-
-# Application logs
-docker-compose logs -f backend
-docker-compose logs -f frontend
-```
-
-## 🛠️ **Management**
-
-### **Docker Commands:**
-```bash
-# Start services
-docker-compose up -d
-
-# Stop services
-docker-compose down
-
-# Restart services
-docker-compose restart
-
-# View status
-docker-compose ps
-
-# View logs
-docker-compose logs -f
-```
-
-### **Development Commands:**
-```bash
-# Backend
-cd Backend
-npm start
-npm run dev
-
-# Frontend
-cd Frontend
-npm start
-npm run build
-```
+- **Image Size Limit**: 5MB per photo
+- **Format**: JPG with 95% quality
+- **Storage**: Employee-specific folders
+- **Database**: Optimized queries with image paths
+- **Docker**: Persistent volumes for scalability
 
 ## 🔒 **Security**
 
-### **Production Considerations:**
-1. **Change default passwords** in environment variables
-2. **Use HTTPS** in production
-3. **Implement rate limiting**
-4. **Set up proper authentication**
-5. **Regular security updates**
+- **File Validation**: Only image files accepted
+- **Size Limits**: 5MB maximum per upload
+- **Path Sanitization**: Secure file naming
+- **Admin Only**: Photo viewing restricted to admins
+- **Authentication**: JWT-based access control
 
-### **Environment Security:**
-```env
-# Production settings
-NODE_ENV=production
-JWT_SECRET=your-very-secure-jwt-secret
-MONGODB_URI=mongodb://user:password@host:port/database
-```
+## 🌟 **Key Benefits**
 
-## 📚 **Documentation**
+1. **Visual Verification** - Photos prove attendance
+2. **Fraud Prevention** - Camera prevents buddy punching
+3. **Audit Trail** - Complete photo history
+4. **Easy Management** - Admin-friendly photo viewer
+5. **Scalable Storage** - Docker volumes for growth
+6. **Production Ready** - Multiple deployment options
 
-### **Guides:**
-- [Daily Reset System](DAILY_RESET_SOLUTION.md)
-- [Docker Deployment](DOCKER_DEPLOYMENT.md)
-- [API Documentation](API_DOCUMENTATION.md)
+## 📞 **Support**
 
-### **Architecture:**
-- [Project Structure](PROJECT_STRUCTURE.md)
-- [Database Schema](DATABASE_SCHEMA.md)
-- [Component Documentation](COMPONENT_DOCS.md)
+### **Troubleshooting**
+- Check `CAMERA_FEATURE_COMPLETE.md` for full documentation
+- Run `Backend/verify-database-images.js` to test database
+- Check Docker logs: `docker-compose logs backend`
+- Verify file permissions in uploads directory
 
-## 🚨 **Troubleshooting**
+### **Common Issues**
+1. **Camera not opening** - Check browser permissions
+2. **Images not saving** - Verify multer configuration
+3. **Admin panel empty** - Check API endpoint returns
+4. **Docker issues** - Ensure volumes are mounted
 
-### **Common Issues:**
+## 📝 **License**
 
-#### **Daily Reset Not Working:**
-```bash
-# Check logs
-docker-compose logs backend | grep -i reset
-
-# Test reset endpoint
-curl -X POST http://localhost:5000/api/employee/manual-daily-reset
-
-# Check timezone
-docker exec attendance-backend date
-```
-
-#### **Database Connection Issues:**
-```bash
-# Check MongoDB status
-docker-compose logs mongodb
-
-# Test connection
-docker exec attendance-backend node -e "
-const mongoose = require('mongoose');
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('Connected'))
-  .catch(err => console.error(err));
-"
-```
-
-#### **Frontend Not Loading:**
-```bash
-# Check frontend logs
-docker-compose logs frontend
-
-# Check nginx configuration
-docker exec attendance-frontend nginx -t
-```
+This project is open source and available under the [MIT License](LICENSE).
 
 ## 🤝 **Contributing**
 
-1. **Fork** the repository
-2. **Create** a feature branch
-3. **Make** your changes
-4. **Test** thoroughly
-5. **Submit** a pull request
-
-### **Development Setup:**
-```bash
-# Clone your fork
-git clone https://github.com/your-username/attendanceportal-main.git
-cd attendanceportal-main
-
-# Install dependencies
-cd Backend && npm install
-cd ../Frontend && npm install
-
-# Start development servers
-cd ../Backend && npm run dev
-cd ../Frontend && npm start
-```
-
-## 📄 **License**
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🆘 **Support**
-
-### **Getting Help:**
-- **GitHub Issues**: Report bugs and feature requests
-- **Documentation**: Check the guides in the docs folder
-- **Logs**: Use `docker-compose logs` for debugging
-
-### **Contact:**
-- **Repository**: https://github.com/Venkyudemy/attendanceportal-main
-- **Issues**: https://github.com/Venkyudemy/attendanceportal-main/issues
-
-## 🎉 **Success Indicators**
-
-### **System Working Correctly:**
-- ✅ All services are running
-- ✅ Health checks are passing
-- ✅ Frontend is accessible
-- ✅ Backend API is responding
-- ✅ Daily reset is scheduled
-- ✅ Admin controls are functional
-
-### **Daily Reset Verification:**
-- ✅ Console shows reset scheduling
-- ✅ Manual reset button works
-- ✅ Reset status endpoint returns data
-- ✅ All employees reset to "Absent"
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
 
 ---
 
-## 🚀 **Next Steps**
+## 🎉 **Success!**
 
-1. **Deploy**: Use Docker for production deployment
-2. **Configure**: Set up environment variables
-3. **Monitor**: Implement logging and monitoring
-4. **Scale**: Add load balancing as needed
-5. **Secure**: Implement production security measures
+Your attendance portal now includes:
+- ✅ **Camera capture** for check-in/check-out
+- ✅ **Image storage** in JPG format  
+- ✅ **Database integration** with MongoDB
+- ✅ **Admin photo viewer** with table display
+- ✅ **Docker support** with persistent storage
+- ✅ **Production deployment** ready
 
-**Your attendance portal with daily reset functionality is ready!** 🎉
+**Ready to deploy and use! 🚀📸**
 
 ---
 
-**Made with ❤️ for efficient employee attendance management** 
+**Repository**: [https://github.com/Venkyudemy/attendanceportal-c.git](https://github.com/Venkyudemy/attendanceportal-c.git)
+
+**Live Demo**: Deploy using Docker for immediate testing!
