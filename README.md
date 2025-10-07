@@ -29,24 +29,24 @@ A comprehensive attendance management system with **camera capture functionality
 ### **Local Development**
 
 1. **Clone the repository**
-   ```bash
+```bash
    git clone https://github.com/Venkyudemy/attendanceportal-c.git
    cd attendanceportal-c
    ```
 
 2. **Start Backend**
-   ```bash
-   cd Backend
-   npm install
-   npm start
-   ```
+```bash
+cd Backend
+npm install
+npm start
+```
 
 3. **Start Frontend**
-   ```bash
-   cd Frontend
-   npm install
-   npm start
-   ```
+```bash
+cd Frontend
+npm install
+npm start
+```
 
 4. **Access the application**
    - Frontend: http://localhost:3000
