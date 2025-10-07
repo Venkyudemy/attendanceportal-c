@@ -1,3 +1,30 @@
+## Enabling HTTPS for Camera Access in Production
+
+Most browsers require a secure origin (HTTPS or localhost) to allow camera access. This setup enables HTTPS inside the frontend container so `getUserMedia` works reliably in production.
+
+### Files
+- `Frontend/nginx.ssl.conf.template` – HTTPS nginx config that proxies to `backend:5000`
+- `Frontend/Dockerfile` – selects HTTP/HTTPS template via `ENABLE_SSL` build arg
+- `docker-compose.prod.yml` – enables SSL, maps `443`, and mounts `./certs` into the container
+
+### Steps
+1. Generate a self-signed certificate (or provide a real one):
+```
+mkdir -p certs
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+  -keyout certs/server.key -out certs/server.crt \
+  -subj "/C=IN/ST=TS/L=HYD/O=AttendancePortal/OU=IT/CN=localhost"
+```
+2. Build and start production with SSL:
+```
+docker-compose -f docker-compose.prod.yml up --build -d
+```
+3. Open the site at `https://<server-ip>` and allow the browser security prompt for the self‑signed cert.
+
+### Notes
+- API requests are proxied to `http://backend:5000` via the Docker network.
+- If you use a real DNS name, replace certificate with a trusted one (e.g., Let’s Encrypt in front of Nginx or at your reverse proxy).
+- Localhost is treated as secure; HTTPS is required for remote access.
 # Frontend Docker + Nginx Setup
 
 This setup uses nginx's built-in `envsubst` mechanism to dynamically configure the backend API proxy at container startup, avoiding conflicts with nginx's official entrypoint scripts.

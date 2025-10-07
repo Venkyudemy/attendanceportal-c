@@ -17,8 +17,22 @@ RUN rm -rf ./*
 
 COPY --from=build /app/build .
 
-# Copy nginx config template (with BACKEND_PRIVATE_IP placeholder)
-COPY nginx.conf.template /etc/nginx/templates/default.conf.template
+ARG ENABLE_SSL=false
+
+# Copy HTTP or HTTPS nginx template based on build arg
+COPY nginx.conf.template /tmp/nginx-http.conf.template
+COPY nginx.ssl.conf.template /tmp/nginx-https.conf.template
+
+RUN if [ "$ENABLE_SSL" = "true" ]; then \
+      mkdir -p /etc/nginx/templates && \
+      cp /tmp/nginx-https.conf.template /etc/nginx/templates/default.conf.template; \
+    else \
+      mkdir -p /etc/nginx/templates && \
+      cp /tmp/nginx-http.conf.template /etc/nginx/templates/default.conf.template; \
+    fi
 
 EXPOSE 80
+
+# Expose 443 only if SSL is enabled (harmless if not used)
+EXPOSE 443
 CMD ["nginx", "-g", "daemon off;"]

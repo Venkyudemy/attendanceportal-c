@@ -5,8 +5,11 @@ services:
     build:
       context: ./Frontend
       dockerfile: Dockerfile
+      args:
+        ENABLE_SSL: "true"
     ports:
       - "80:80"
+      - "443:443"
     depends_on:
       - backend
     environment:
@@ -16,6 +19,8 @@ services:
     restart: unless-stopped
     networks:
       - attendance-network
+    volumes:
+      - ./certs:/etc/nginx/certs:ro
 
   backend:
     build:
