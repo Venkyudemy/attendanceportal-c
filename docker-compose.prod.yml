@@ -8,18 +8,16 @@ services:
     ports:
       - "80:80"
     depends_on:
-      - attendence-backend
+      - backend
     environment:
       # Updated with actual server IP address
       - REACT_APP_API_URL=http://10.140.94.16:5000/api
       - TZ=Asia/Kolkata
-      # Nginx environment variable for backend proxy
-      - BACKEND_PRIVATE_IP=attendence-backend
     restart: unless-stopped
     networks:
       - attendance-network
 
-  attendence-backend:
+  backend:
     build:
       context: ./Backend
       dockerfile: Dockerfile
