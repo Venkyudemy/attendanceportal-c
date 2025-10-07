@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Test - Attendance Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .video-container {
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        video {
+            width: 100%;
+            height: auto;
+            display: block;
+            transform: scaleX(-1); /* Mirror effect */
+        }
+        
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .status.show {
+            display: block;
+        }
+        
+        .status.loading {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffc107;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #28a745;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #dc3545;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .info-box {
+            background: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 14px;
+            color: #004085;
+        }
+        
+        .info-box strong {
+            display: block;
+            margin-bottom: 8px;
+        }
+        
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #ffffff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        canvas {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        
+        .captured-image {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📸 Camera Test Tool</h1>
+        <p class="subtitle">Test if your camera is working properly for the Attendance Portal</p>
+        
+        <div class="info-box">
+            <strong>⚠️ Important:</strong>
+            When prompted, click <strong>"Allow"</strong> to grant camera permissions.
+            This test will help identify if the issue is with your camera, browser, or permissions.
+        </div>
+        
+        <div class="status loading show" id="status">
+            <div class="loading-spinner"></div>
+            <p>Requesting camera access... Please allow when prompted.</p>
+        </div>
+        
+        <div class="video-container" id="videoContainer">
+            <video id="video" autoplay playsinline muted class="hidden"></video>
+        </div>
+        
+        <div class="captured-image hidden" id="capturedImage">
+            <h3>Captured Photo:</h3>
+            <canvas id="canvas"></canvas>
+        </div>
+        
+        <div class="button-group">
+            <button class="btn-primary" id="startBtn" onclick="startCamera()">
+                🎥 Start Camera
+            </button>
+            <button class="btn-success hidden" id="captureBtn" onclick="capturePhoto()">
+                📷 Capture Photo
+            </button>
+            <button class="btn-secondary hidden" id="stopBtn" onclick="stopCamera()">
+                ⏹️ Stop Camera
+            </button>
+        </div>
+        
+        <div class="info-box" style="margin-top: 30px;">
+            <strong>✅ What to Check:</strong>
+            <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>Can you see yourself in the video? → Camera is working!</li>
+                <li>Getting an error message? → Check permissions or troubleshooting guide</li>
+                <li>Black screen? → Camera may be in use by another application</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let stream = null;
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const status = document.getElementById('status');
+        const startBtn = document.getElementById('startBtn');
+        const captureBtn = document.getElementById('captureBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const capturedImage = document.getElementById('capturedImage');
+        const videoContainer = document.getElementById('videoContainer');
+
+        function showStatus(message, type) {
+            status.textContent = message;
+            status.className = `status show ${type}`;
+        }
+
+        async function startCamera() {
+            try {
+                showStatus('🎥 Requesting camera access... Please allow when prompted.', 'loading');
+                
+                // Check if camera API is supported
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    throw new Error('Camera API not supported in this browser. Please use Chrome, Firefox, or Edge.');
+                }
+
+                // Request camera access
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 },
+                        facingMode: 'user'
+                    },
+                    audio: false
+                });
+
+                // Set video source
+                video.srcObject = stream;
+                video.classList.remove('hidden');
+                
+                // Wait for video to be ready
+                await video.play();
+
+                // Update UI
+                showStatus('✅ Camera is working! You should see yourself in the video above.', 'success');
+                startBtn.classList.add('hidden');
+                captureBtn.classList.remove('hidden');
+                stopBtn.classList.remove('hidden');
+                
+                console.log('✅ Camera started successfully');
+                console.log('Stream info:', {
+                    active: stream.active,
+                    tracks: stream.getTracks().length
+                });
+
+            } catch (err) {
+                console.error('❌ Camera error:', err);
+                
+                let errorMessage = '❌ Camera Error: ';
+                
+                if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+                    errorMessage += 'Camera permission denied. Please click "Allow" when prompted, or check your browser settings.';
+                } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+                    errorMessage += 'No camera found. Please connect a camera and try again.';
+                } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
+                    errorMessage += 'Camera is already in use by another application. Please close other apps and try again.';
+                } else if (err.name === 'OverconstrainedError') {
+                    errorMessage += 'Camera constraints not supported. Your camera may not support the requested resolution.';
+                } else if (err.message.includes('not supported')) {
+                    errorMessage += err.message;
+                } else {
+                    errorMessage += err.message || 'Unknown error. Please check console for details.';
+                }
+                
+                showStatus(errorMessage, 'error');
+            }
+        }
+
+        function capturePhoto() {
+            if (!video.videoWidth || !video.videoHeight) {
+                showStatus('❌ Video not ready. Please wait a moment and try again.', 'error');
+                return;
+            }
+
+            // Set canvas size to match video
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            // Draw video frame to canvas
+            const context = canvas.getContext('2d');
+            context.save();
+            context.scale(-1, 1); // Mirror the image
+            context.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
+            context.restore();
+
+            // Show captured image
+            capturedImage.classList.remove('hidden');
+            videoContainer.classList.add('hidden');
+
+            showStatus('✅ Photo captured! This proves your camera is working correctly.', 'success');
+            
+            // You can download or test conversion to blob here
+            canvas.toBlob((blob) => {
+                console.log('✅ Photo captured as blob:', {
+                    size: blob.size,
+                    type: blob.type
+                });
+            }, 'image/jpeg', 0.95);
+        }
+
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => {
+                    track.stop();
+                    console.log('Stopped track:', track.label);
+                });
+                stream = null;
+            }
+
+            video.srcObject = null;
+            video.classList.add('hidden');
+            capturedImage.classList.add('hidden');
+            videoContainer.classList.remove('hidden');
+            
+            startBtn.classList.remove('hidden');
+            captureBtn.classList.add('hidden');
+            stopBtn.classList.add('hidden');
+            
+            showStatus('Camera stopped. Click "Start Camera" to test again.', 'loading');
+        }
+
+        // Start camera automatically on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                startCamera();
+            }, 500);
+        });
+
+        // Clean up on page unload
+        window.addEventListener('beforeunload', () => {
+            stopCamera();
+        });
+    </script>
+</body>
+</html>
+

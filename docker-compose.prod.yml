@@ -1,0 +1,99 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    environment:
+      # Updated with actual server IP address
+      - REACT_APP_API_URL=http://10.140.94.16:5000/api
+      - TZ=Asia/Kolkata
+    restart: unless-stopped
+    networks:
+      - attendance-network
+
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - MONGO_URL=mongodb://mongo:27017/attendanceportal
+      - JWT_SECRET=your-super-secret-jwt-key-change-in-production
+      - TZ=Asia/Kolkata
+      - MONGODB_URI=mongodb://mongo:27017/attendanceportal
+      - WORKING_HOURS_START=09:00
+      - WORKING_HOURS_END=17:45
+      - LATE_THRESHOLD_MINUTES=15
+      - MAX_FILE_SIZE=5242880
+      - UPLOAD_PATH=/app/uploads
+    depends_on:
+      - mongo
+    restart: unless-stopped
+    networks:
+      - attendance-network
+    volumes:
+      - ./Backend/scripts:/app/scripts:ro
+      - uploads_data:/app/uploads
+    command: >
+      sh -c "
+        echo '🚀 Starting deployment initialization...' &&
+        echo '⏳ Waiting for MongoDB to be ready...' &&
+        sleep 15 &&
+        echo '🔍 Checking if admin user exists...' &&
+        node -e \"
+          const mongoose = require('mongoose');
+          const User = require('./models/User');
+          mongoose.connect(process.env.MONGODB_URI || 'mongodb://mongo:27017/attendanceportal')
+            .then(async () => {
+              const adminExists = await User.findOne({ role: 'admin' });
+              if (!adminExists) {
+                console.log('👤 Admin user not found, creating...');
+                require('./scripts/createAdmin.js');
+                require('./scripts/addEmployee.js');
+              } else {
+                console.log('✅ Admin user already exists, skipping initialization');
+              }
+            })
+            .catch(err => {
+              console.log('❌ Error checking admin user:', err.message);
+            });
+        \" &&
+        echo '🚀 Starting backend server...' &&
+        npm start
+      "
+
+  mongo:
+    image: mongo:6
+    ports:
+      - "27017:27017"
+    environment:
+      - TZ=Asia/Kolkata
+    volumes:
+      - mongo_data:/data/db
+      - ./Backend/scripts:/docker-entrypoint-initdb.d:ro
+    restart: unless-stopped
+    networks:
+      - attendance-network
+    command: mongod --bind_ip_all
+
+volumes:
+  mongo_data:
+    driver: local
+  uploads_data:
+    driver: local
+
+networks:
+  attendance-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
