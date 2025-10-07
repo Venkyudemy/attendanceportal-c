@@ -23,7 +23,8 @@ ARG ENABLE_SSL=false
 COPY nginx.conf.template /tmp/nginx-http.conf.template
 COPY nginx.ssl.conf.template /tmp/nginx-https.conf.template
 
-RUN if [ "$ENABLE_SSL" = "true" ]; then \
+RUN if [ -f env-config.js ]; then cp env-config.js env.js; fi && \
+    if [ "$ENABLE_SSL" = "true" ]; then \
       mkdir -p /etc/nginx/templates && \
       cp /tmp/nginx-https.conf.template /etc/nginx/templates/default.conf.template; \
     else \
