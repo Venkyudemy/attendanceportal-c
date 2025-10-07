@@ -33,6 +33,19 @@ server {
         }
     }
 
+    # Security: block access to dotfiles and env files
+    location ~ (^|/)\. { return 403; }
+    location = /.env { deny all; return 404; }
+
+    # Graceful service worker handling (optional PWA)
+    location = /sw.js {
+        try_files /sw.js /noop-sw.js =204;
+        add_header Cache-Control "no-cache, no-store, must-revalidate";
+    }
+
+    # Graceful logo request (avoid noisy 404s if not present)
+    location = /logo192.png { try_files /logo192.png /favicon.ico =204; }
+
     # Proxy API requests to backend container
     location /api/ {
         proxy_pass http://backend:5000;
