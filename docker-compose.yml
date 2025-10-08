@@ -73,14 +73,14 @@ services:
         node check-employee.js &&
         echo '📸 Ensuring uploads directory structure...' &&
         mkdir -p /app/uploads/employees &&
-        echo '🎯 BULLETPROOF IMAGE PATH FIXING...' &&
+        echo '🎯 DEFINITIVE CAMERA CAPTURE IMAGE FIX...' &&
         node -e \"
           const mongoose = require('mongoose');
           const Employee = require('./models/Employee');
           const fs = require('fs');
           const path = require('path');
 
-          console.log('🎯 BULLETPROOF IMAGE FIX - Starting...');
+          console.log('🎯 DEFINITIVE CAMERA CAPTURE IMAGE FIX - Starting...');
 
           mongoose.connect(process.env.MONGODB_URI || 'mongodb://mongo:27017/attendanceportal')
             .then(async () => {
@@ -237,13 +237,13 @@ services:
                 }
               }
               
-              console.log('\n🎯 BULLETPROOF FIX COMPLETE!');
-              console.log('✅ All image paths have been verified and fixed!');
+              console.log('\n🎯 DEFINITIVE CAMERA CAPTURE FIX COMPLETE!');
+              console.log('✅ All camera capture image paths have been verified and fixed!');
               
               process.exit(0);
             })
             .catch(err => {
-              console.error('❌ Bulletproof fix error:', err);
+              console.error('❌ Definitive camera capture fix error:', err);
               process.exit(1);
             });
         \" &&

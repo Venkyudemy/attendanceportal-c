@@ -344,7 +344,7 @@ const AttendanceImages = () => {
                       {emp.checkInImage ? (
                         <div className="attendance-photo-container">
                           <a 
-                            href={`${emp.checkInImage}`} 
+                            href={`http://localhost:5000${emp.checkInImage}`} 
                             target="_blank" 
                             rel="noopener noreferrer"
                             className="photo-link"
@@ -356,15 +356,16 @@ const AttendanceImages = () => {
                             }}
                           >
                             <img
-                              src={`${emp.checkInImage}`}
+                              src={`http://localhost:5000${emp.checkInImage}`}
                               alt="Check-in"
                               className="attendance-photo checkin"
                               onLoad={(e) => {
                                 console.log('✅ Check-in image loaded successfully:', emp.checkInImage);
+                                console.log('   Full URL:', `http://localhost:5000${emp.checkInImage}`);
                               }}
                               onError={(e) => {
                                 console.error('❌ Failed to load check-in image:', emp.checkInImage);
-                                console.error('   Full URL:', window.location.origin + emp.checkInImage);
+                                console.error('   Full URL:', `http://localhost:5000${emp.checkInImage}`);
                                 e.target.style.display = 'none';
                                 e.target.nextSibling.style.display = 'flex';
                               }}
@@ -396,7 +397,7 @@ const AttendanceImages = () => {
                       {emp.checkOutImage ? (
                         <div className="attendance-photo-container">
                           <a 
-                            href={`${emp.checkOutImage}`} 
+                            href={`http://localhost:5000${emp.checkOutImage}`} 
                             target="_blank" 
                             rel="noopener noreferrer"
                             className="photo-link"
@@ -408,15 +409,16 @@ const AttendanceImages = () => {
                             }}
                           >
                             <img
-                              src={`${emp.checkOutImage}`}
+                              src={`http://localhost:5000${emp.checkOutImage}`}
                               alt="Check-out"
                               className="attendance-photo checkout"
                               onLoad={(e) => {
                                 console.log('✅ Check-out image loaded successfully:', emp.checkOutImage);
+                                console.log('   Full URL:', `http://localhost:5000${emp.checkOutImage}`);
                               }}
                               onError={(e) => {
                                 console.error('❌ Failed to load check-out image:', emp.checkOutImage);
-                                console.error('   Full URL:', window.location.origin + emp.checkOutImage);
+                                console.error('   Full URL:', `http://localhost:5000${emp.checkOutImage}`);
                                 e.target.style.display = 'none';
                                 e.target.nextSibling.style.display = 'flex';
                               }}
