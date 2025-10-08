@@ -348,15 +348,25 @@ const AttendanceImages = () => {
                             target="_blank" 
                             rel="noopener noreferrer"
                             className="photo-link"
+                            onClick={(e) => {
+                              // Prevent redirect if image fails to load
+                              if (e.target.tagName === 'IMG' && e.target.naturalWidth === 0) {
+                                e.preventDefault();
+                              }
+                            }}
                           >
                             <img
                               src={`${emp.checkInImage}`}
                               alt="Check-in"
                               className="attendance-photo checkin"
+                              onLoad={(e) => {
+                                console.log('✅ Check-in image loaded successfully:', emp.checkInImage);
+                              }}
                               onError={(e) => {
                                 console.error('❌ Failed to load check-in image:', emp.checkInImage);
+                                console.error('   Full URL:', window.location.origin + emp.checkInImage);
                                 e.target.style.display = 'none';
-                                e.target.nextSibling.style.display = 'block';
+                                e.target.nextSibling.style.display = 'flex';
                               }}
                             />
                             <div className="image-error-fallback" style={{display: 'none', width: '100px', height: '100px', backgroundColor: '#f8f9fa', border: '2px dashed #dee2e6', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column'}}>
@@ -390,15 +400,25 @@ const AttendanceImages = () => {
                             target="_blank" 
                             rel="noopener noreferrer"
                             className="photo-link"
+                            onClick={(e) => {
+                              // Prevent redirect if image fails to load
+                              if (e.target.tagName === 'IMG' && e.target.naturalWidth === 0) {
+                                e.preventDefault();
+                              }
+                            }}
                           >
                             <img
                               src={`${emp.checkOutImage}`}
                               alt="Check-out"
                               className="attendance-photo checkout"
+                              onLoad={(e) => {
+                                console.log('✅ Check-out image loaded successfully:', emp.checkOutImage);
+                              }}
                               onError={(e) => {
                                 console.error('❌ Failed to load check-out image:', emp.checkOutImage);
+                                console.error('   Full URL:', window.location.origin + emp.checkOutImage);
                                 e.target.style.display = 'none';
-                                e.target.nextSibling.style.display = 'block';
+                                e.target.nextSibling.style.display = 'flex';
                               }}
                             />
                             <div className="image-error-fallback" style={{display: 'none', width: '100px', height: '100px', backgroundColor: '#f8f9fa', border: '2px dashed #dee2e6', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column'}}>
