@@ -346,16 +346,17 @@ const AttendanceImages = () => {
                         <div className="attendance-photo-container">
                           <div className="photo-link" style={{cursor:'zoom-in'}}>
                             <img
-                              src={`${emp.checkInImage}`}
+                              src={`http://localhost:5000${emp.checkInImage}`}
                               alt="Check-in"
                               className="attendance-photo checkin"
-                              onClick={() => setPreviewSrc(emp.checkInImage)}
+                              onClick={() => setPreviewSrc(`http://localhost:5000${emp.checkInImage}`)}
                               onLoad={() => {
                                 console.log('✅ Check-in image loaded successfully:', emp.checkInImage);
+                                console.log('   Full URL:', `http://localhost:5000${emp.checkInImage}`);
                               }}
                               onError={(e) => {
                                 console.error('❌ Failed to load check-in image:', emp.checkInImage);
-                                console.error('   Full URL:', window.location.origin + emp.checkInImage);
+                                console.error('   Full URL:', `http://localhost:5000${emp.checkInImage}`);
                                 e.target.style.display = 'none';
                                 e.target.nextSibling.style.display = 'flex';
                               }}
@@ -388,16 +389,17 @@ const AttendanceImages = () => {
                         <div className="attendance-photo-container">
                           <div className="photo-link" style={{cursor:'zoom-in'}}>
                             <img
-                              src={`${emp.checkOutImage}`}
+                              src={`http://localhost:5000${emp.checkOutImage}`}
                               alt="Check-out"
                               className="attendance-photo checkout"
-                              onClick={() => setPreviewSrc(emp.checkOutImage)}
+                              onClick={() => setPreviewSrc(`http://localhost:5000${emp.checkOutImage}`)}
                               onLoad={() => {
                                 console.log('✅ Check-out image loaded successfully:', emp.checkOutImage);
+                                console.log('   Full URL:', `http://localhost:5000${emp.checkOutImage}`);
                               }}
                               onError={(e) => {
                                 console.error('❌ Failed to load check-out image:', emp.checkOutImage);
-                                console.error('   Full URL:', window.location.origin + emp.checkOutImage);
+                                console.error('   Full URL:', `http://localhost:5000${emp.checkOutImage}`);
                                 e.target.style.display = 'none';
                                 e.target.nextSibling.style.display = 'flex';
                               }}
