@@ -14,12 +14,29 @@ pipeline {
             }
         }
 
+        stage('Clean Docker Environment') {
+            steps {
+                script {
+                    echo "🧹 Cleaning up old Docker containers and images..."
+                    // Stop and remove all containers
+                    sh 'docker ps -aq | xargs -r docker stop || true'
+                    sh 'docker ps -aq | xargs -r docker rm || true'
+
+                    // Remove all images
+                    sh 'docker images -aq | xargs -r docker rmi -f || true'
+
+                    // Optional: remove unused networks/volumes
+                    sh 'docker system prune -af --volumes || true'
+                }
+            }
+        }
+
         stage('Build & Run Services') {
             steps {
                 script {
                     dir("${DOCKER_DIR}") {
                         sh 'docker compose down || true'
-                        sh 'docker compose build'
+                        sh 'docker compose build --no-cache'
                         sh 'docker compose up -d'
                     }
                 }
