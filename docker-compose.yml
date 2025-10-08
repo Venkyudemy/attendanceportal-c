@@ -5,6 +5,8 @@ services:
     build:
       context: ./Frontend
       dockerfile: Dockerfile
+      args:
+        ENABLE_SSL: "false"
     ports:
       - "3000:80"
     depends_on:
@@ -23,7 +25,7 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
       - PORT=5000
       - MONGO_URL=mongodb://mongo:27017/attendanceportal
       - JWT_SECRET=your-super-secret-jwt-key-change-in-production
@@ -34,6 +36,7 @@ services:
       - LATE_THRESHOLD_MINUTES=15
       - MAX_FILE_SIZE=5242880
       - UPLOAD_PATH=/app/uploads
+      - FRONTEND_ORIGIN=http://localhost:3000
     depends_on:
       - mongo
     restart: unless-stopped
@@ -42,7 +45,33 @@ services:
     volumes:
       - ./Backend/scripts:/app/scripts:ro
       - uploads_data:/app/uploads
-    command: npm start
+    command: >
+      sh -c "
+        echo '🚀 Starting development backend...' &&
+        echo '⏳ Waiting for MongoDB to be ready...' &&
+        sleep 10 &&
+        echo '🔍 Checking if admin user exists...' &&
+        node -e \"
+          const mongoose = require('mongoose');
+          const User = require('./models/User');
+          mongoose.connect(process.env.MONGODB_URI || 'mongodb://mongo:27017/attendanceportal')
+            .then(async () => {
+              const adminExists = await User.findOne({ role: 'admin' });
+              if (!adminExists) {
+                console.log('👤 Admin user not found, creating...');
+                require('./scripts/createAdmin.js');
+                require('./scripts/addEmployee.js');
+              } else {
+                console.log('✅ Admin user already exists, skipping initialization');
+              }
+            })
+            .catch(err => {
+              console.log('❌ Error checking admin user:', err.message);
+            });
+        \" &&
+        echo '🚀 Starting backend server...' &&
+        npm start
+      "
 
   mongo:
     image: mongo:6

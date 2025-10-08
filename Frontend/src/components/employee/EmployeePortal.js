@@ -285,8 +285,17 @@ const EmployeePortal = ({ currentUser }) => {
       formData.append('image', imageBlob, `checkin_${employeeId}_${Date.now()}.jpg`);
       formData.append('type', 'checkin');
 
-      // Get API URL from environment or default
-      const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+      // Get API URL using the same method as api.js
+      const getApiBaseUrl = () => {
+        if (window.env && window.env.REACT_APP_API_URL) {
+          return window.env.REACT_APP_API_URL;
+        }
+        if (process.env.REACT_APP_API_URL) {
+          return process.env.REACT_APP_API_URL;
+        }
+        return process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:5000/api';
+      };
+      const API_URL = getApiBaseUrl();
       const token = localStorage.getItem('token');
 
       console.log('📤 Sending image to backend:', {
@@ -407,8 +416,17 @@ const EmployeePortal = ({ currentUser }) => {
       formData.append('image', imageBlob, `checkout_${employeeId}_${Date.now()}.jpg`);
       formData.append('type', 'checkout');
 
-      // Get API URL from environment or default
-      const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+      // Get API URL using the same method as api.js
+      const getApiBaseUrl = () => {
+        if (window.env && window.env.REACT_APP_API_URL) {
+          return window.env.REACT_APP_API_URL;
+        }
+        if (process.env.REACT_APP_API_URL) {
+          return process.env.REACT_APP_API_URL;
+        }
+        return process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:5000/api';
+      };
+      const API_URL = getApiBaseUrl();
       const token = localStorage.getItem('token');
 
       console.log('📤 Sending check-out image to backend:', {

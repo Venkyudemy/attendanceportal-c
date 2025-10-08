@@ -51,7 +51,7 @@ services:
       - uploads_data:/app/uploads
     command: >
       sh -c "
-        echo '🚀 Starting deployment initialization...' &&
+        echo '🚀 Starting production deployment initialization...' &&
         echo '⏳ Waiting for MongoDB to be ready...' &&
         sleep 15 &&
         echo '🔍 Checking if admin user exists...' &&
@@ -73,6 +73,8 @@ services:
               console.log('❌ Error checking admin user:', err.message);
             });
         \" &&
+        echo '🔍 Verifying employee database...' &&
+        node check-employee.js &&
         echo '🚀 Starting backend server...' &&
         npm start
       "
