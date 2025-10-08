@@ -4,6 +4,7 @@ import './AttendanceImages.css';
 const AttendanceImages = () => {
   const [attendanceData, setAttendanceData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [previewSrc, setPreviewSrc] = useState(null);
   const [selectedDate, setSelectedDate] = useState(() => {
     // Get today's date in YYYY-MM-DD format (local timezone)
     const today = new Date();
@@ -343,29 +344,18 @@ const AttendanceImages = () => {
                     <td>
                       {emp.checkInImage ? (
                         <div className="attendance-photo-container">
-                          <a 
-                            href={`http://localhost:5000${emp.checkInImage}`} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="photo-link"
-                            onClick={(e) => {
-                              // Prevent redirect if image fails to load
-                              if (e.target.tagName === 'IMG' && e.target.naturalWidth === 0) {
-                                e.preventDefault();
-                              }
-                            }}
-                          >
+                          <div className="photo-link" style={{cursor:'zoom-in'}}>
                             <img
-                              src={`http://localhost:5000${emp.checkInImage}`}
+                              src={`${emp.checkInImage}`}
                               alt="Check-in"
                               className="attendance-photo checkin"
-                              onLoad={(e) => {
+                              onClick={() => setPreviewSrc(emp.checkInImage)}
+                              onLoad={() => {
                                 console.log('✅ Check-in image loaded successfully:', emp.checkInImage);
-                                console.log('   Full URL:', `http://localhost:5000${emp.checkInImage}`);
                               }}
                               onError={(e) => {
                                 console.error('❌ Failed to load check-in image:', emp.checkInImage);
-                                console.error('   Full URL:', `http://localhost:5000${emp.checkInImage}`);
+                                console.error('   Full URL:', window.location.origin + emp.checkInImage);
                                 e.target.style.display = 'none';
                                 e.target.nextSibling.style.display = 'flex';
                               }}
@@ -377,7 +367,7 @@ const AttendanceImages = () => {
                             <div className="photo-overlay">
                               <span>🔍 View Full Size</span>
                             </div>
-                          </a>
+                          </div>
                           <div className="photo-info">
                             <div className="time-badge checkin-time">
                               ⏰ {emp.checkIn}
@@ -396,29 +386,18 @@ const AttendanceImages = () => {
                     <td>
                       {emp.checkOutImage ? (
                         <div className="attendance-photo-container">
-                          <a 
-                            href={`http://localhost:5000${emp.checkOutImage}`} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="photo-link"
-                            onClick={(e) => {
-                              // Prevent redirect if image fails to load
-                              if (e.target.tagName === 'IMG' && e.target.naturalWidth === 0) {
-                                e.preventDefault();
-                              }
-                            }}
-                          >
+                          <div className="photo-link" style={{cursor:'zoom-in'}}>
                             <img
-                              src={`http://localhost:5000${emp.checkOutImage}`}
+                              src={`${emp.checkOutImage}`}
                               alt="Check-out"
                               className="attendance-photo checkout"
-                              onLoad={(e) => {
+                              onClick={() => setPreviewSrc(emp.checkOutImage)}
+                              onLoad={() => {
                                 console.log('✅ Check-out image loaded successfully:', emp.checkOutImage);
-                                console.log('   Full URL:', `http://localhost:5000${emp.checkOutImage}`);
                               }}
                               onError={(e) => {
                                 console.error('❌ Failed to load check-out image:', emp.checkOutImage);
-                                console.error('   Full URL:', `http://localhost:5000${emp.checkOutImage}`);
+                                console.error('   Full URL:', window.location.origin + emp.checkOutImage);
                                 e.target.style.display = 'none';
                                 e.target.nextSibling.style.display = 'flex';
                               }}
@@ -430,7 +409,7 @@ const AttendanceImages = () => {
                             <div className="photo-overlay">
                               <span>🔍 View Full Size</span>
                             </div>
-                          </a>
+                          </div>
                           <div className="photo-info">
                             <div className="time-badge checkout-time">
                               ⏰ {emp.checkOut}
@@ -457,6 +436,34 @@ const AttendanceImages = () => {
             </table>
           </div>
         </>
+      )}
+
+      {previewSrc && (
+        <div
+          className="image-modal-overlay"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.7)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999
+          }}
+          onClick={() => setPreviewSrc(null)}
+        >
+          <img
+            src={previewSrc}
+            alt="Preview"
+            style={{
+              maxWidth: '90vw',
+              maxHeight: '90vh',
+              borderRadius: '8px',
+              boxShadow: '0 10px 30px rgba(0,0,0,0.4)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
       )}
     </div>
   );
