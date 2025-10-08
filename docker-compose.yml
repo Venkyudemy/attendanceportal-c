@@ -73,7 +73,7 @@ services:
         node check-employee.js &&
         echo '📸 Ensuring uploads directory structure...' &&
         mkdir -p /app/uploads/employees &&
-        echo '🔧 COMPREHENSIVE IMAGE PATH FIXING...' &&
+        echo '🔥 AGGRESSIVE IMAGE PATH FIXING...' &&
         node -e \"
           const mongoose = require('mongoose');
           const Employee = require('./models/Employee');
@@ -82,13 +82,36 @@ services:
           
           mongoose.connect(process.env.MONGODB_URI || 'mongodb://mongo:27017/attendanceportal')
             .then(async () => {
-              console.log('🔍 COMPREHENSIVE IMAGE PATH CHECK - Starting...');
+              console.log('🔥 AGGRESSIVE IMAGE FIX - Starting...');
+              
+              // First, scan all upload directories
+              console.log('\n📁 SCANNING ALL UPLOAD DIRECTORIES...');
+              const uploadsDir = '/app/uploads/employees';
+              const employeeImageMap = {};
+              
+              if (fs.existsSync(uploadsDir)) {
+                const employeeDirs = fs.readdirSync(uploadsDir);
+                console.log('Found employee directories:', employeeDirs);
+                
+                for (const empDir of employeeDirs) {
+                  const empPath = path.join(uploadsDir, empDir);
+                  if (fs.statSync(empPath).isDirectory()) {
+                    const files = fs.readdirSync(empPath);
+                    const imageFiles = files.filter(file => 
+                      file.toLowerCase().endsWith('.jpg') || file.toLowerCase().endsWith('.jpeg')
+                    );
+                    employeeImageMap[empDir] = imageFiles;
+                    console.log('Employee ' + empDir + ' images:', imageFiles);
+                  }
+                }
+              }
               
               const employees = await Employee.find({});
               let totalFixed = 0;
               
               for (const emp of employees) {
                 console.log('\n👤 Processing employee:', emp.name, '(ID:', emp._id + ')');
+                const empId = emp._id.toString();
                 
                 if (emp.attendance?.today) {
                   const today = emp.attendance.today;
@@ -102,28 +125,33 @@ services:
                     console.log('   ✅ File exists:', fs.existsSync(fullPath));
                     
                     if (!fs.existsSync(fullPath)) {
-                      const employeeDir = path.join('/app/uploads/employees', emp._id.toString());
-                      console.log('   🔍 Checking directory:', employeeDir);
+                      console.log('   🔍 File not found, searching for alternatives...');
                       
+                      const employeeDir = path.join('/app/uploads/employees', empId);
                       if (fs.existsSync(employeeDir)) {
                         const files = fs.readdirSync(employeeDir);
-                        console.log('   📁 Files in directory:', files);
+                        console.log('   📁 Files in employee directory:', files);
                         
-                        // Find any checkin image
-                        const checkinFiles = files.filter(file => 
-                          file.toLowerCase().includes('checkin') && 
+                        // Find checkin image (more flexible matching)
+                        let checkinFiles = files.filter(file => 
+                          (file.toLowerCase().includes('checkin') || file.toLowerCase().includes('check-in') || file.toLowerCase().includes('in')) &&
                           (file.toLowerCase().endsWith('.jpg') || file.toLowerCase().endsWith('.jpeg'))
                         );
                         
+                        if (checkinFiles.length === 0) {
+                          // If no checkin-specific files, try any image file
+                          checkinFiles = files.filter(file => 
+                            file.toLowerCase().endsWith('.jpg') || file.toLowerCase().endsWith('.jpeg')
+                          );
+                        }
+                        
                         if (checkinFiles.length > 0) {
-                          const correctPath = '/uploads/employees/' + emp._id.toString() + '/' + checkinFiles[0];
+                          const correctPath = '/uploads/employees/' + empId + '/' + checkinFiles[0];
                           today.checkInImage = correctPath;
                           needsUpdate = true;
                           console.log('   🔧 FIXED check-in path:', correctPath);
                           totalFixed++;
                         }
-                      } else {
-                        console.log('   ❌ Employee directory does not exist');
                       }
                     }
                   }
@@ -136,18 +164,27 @@ services:
                     console.log('   ✅ File exists:', fs.existsSync(fullPath));
                     
                     if (!fs.existsSync(fullPath)) {
-                      const employeeDir = path.join('/app/uploads/employees', emp._id.toString());
+                      console.log('   🔍 File not found, searching for alternatives...');
                       
+                      const employeeDir = path.join('/app/uploads/employees', empId);
                       if (fs.existsSync(employeeDir)) {
                         const files = fs.readdirSync(employeeDir);
                         
-                        const checkoutFiles = files.filter(file => 
-                          file.toLowerCase().includes('checkout') && 
+                        // Find checkout image (more flexible matching)
+                        let checkoutFiles = files.filter(file => 
+                          (file.toLowerCase().includes('checkout') || file.toLowerCase().includes('check-out') || file.toLowerCase().includes('out')) &&
                           (file.toLowerCase().endsWith('.jpg') || file.toLowerCase().endsWith('.jpeg'))
                         );
                         
+                        if (checkoutFiles.length === 0) {
+                          // If no checkout-specific files, try any image file
+                          checkoutFiles = files.filter(file => 
+                            file.toLowerCase().endsWith('.jpg') || file.toLowerCase().endsWith('.jpeg')
+                          );
+                        }
+                        
                         if (checkoutFiles.length > 0) {
-                          const correctPath = '/uploads/employees/' + emp._id.toString() + '/' + checkoutFiles[0];
+                          const correctPath = '/uploads/employees/' + empId + '/' + checkoutFiles[0];
                           today.checkOutImage = correctPath;
                           needsUpdate = true;
                           console.log('   🔧 FIXED check-out path:', correctPath);
@@ -164,15 +201,16 @@ services:
                 }
               }
               
-              console.log('\n✅ COMPREHENSIVE FIX COMPLETE!');
+              console.log('\n✅ AGGRESSIVE FIX COMPLETE!');
               console.log('📊 Total paths fixed:', totalFixed);
               
-              // Show final status
-              console.log('\n📋 FINAL STATUS:');
-              for (const emp of employees) {
+              // Final verification
+              console.log('\n📋 FINAL VERIFICATION:');
+              const updatedEmployees = await Employee.find({});
+              for (const emp of updatedEmployees) {
                 if (emp.attendance?.today) {
                   const today = emp.attendance.today;
-                  console.log('👤', emp.name + ':');
+                  console.log('\n👤', emp.name + ':');
                   if (today.checkInImage) {
                     const exists = fs.existsSync(path.join('/app', today.checkInImage));
                     console.log('   📸 Check-in:', today.checkInImage, exists ? '✅' : '❌');
@@ -187,7 +225,7 @@ services:
               process.exit(0);
             })
             .catch(err => {
-              console.error('❌ Comprehensive fix error:', err);
+              console.error('❌ Aggressive fix error:', err);
               process.exit(1);
             });
         \" &&
