@@ -73,8 +73,77 @@ services:
               console.log('❌ Error checking admin user:', err.message);
             });
         \" &&
-        echo '🔍 Verifying employee database...' &&
+        echo '🔍 Verifying employee database and image storage...' &&
         node check-employee.js &&
+        echo '📸 Ensuring uploads directory structure...' &&
+        mkdir -p /app/uploads/employees &&
+        echo '🔧 Checking image file paths and fixing database...' &&
+        node -e \"
+          const mongoose = require('mongoose');
+          const Employee = require('./models/Employee');
+          const fs = require('fs');
+          const path = require('path');
+          
+          mongoose.connect(process.env.MONGODB_URI || 'mongodb://mongo:27017/attendanceportal')
+            .then(async () => {
+              console.log('🔍 Checking and fixing image paths...');
+              
+              const employees = await Employee.find({});
+              let fixedCount = 0;
+              
+              for (const emp of employees) {
+                let needsUpdate = false;
+                
+                if (emp.attendance?.today?.checkInImage) {
+                  const fullPath = path.join('/app', emp.attendance.today.checkInImage);
+                  if (!fs.existsSync(fullPath)) {
+                    // Try to find the actual file
+                    const employeeDir = path.join('/app/uploads/employees', emp._id.toString());
+                    if (fs.existsSync(employeeDir)) {
+                      const files = fs.readdirSync(employeeDir);
+                      const imageFiles = files.filter(file => file.toLowerCase().includes('checkin') && (file.toLowerCase().endsWith('.jpg') || file.toLowerCase().endsWith('.jpeg')));
+                      if (imageFiles.length > 0) {
+                        const correctPath = '/uploads/employees/' + emp._id.toString() + '/' + imageFiles[0];
+                        emp.attendance.today.checkInImage = correctPath;
+                        needsUpdate = true;
+                        console.log('🔧 Fixed check-in image path for', emp.name, ':', correctPath);
+                      }
+                    }
+                  }
+                }
+                
+                if (emp.attendance?.today?.checkOutImage) {
+                  const fullPath = path.join('/app', emp.attendance.today.checkOutImage);
+                  if (!fs.existsSync(fullPath)) {
+                    // Try to find the actual file
+                    const employeeDir = path.join('/app/uploads/employees', emp._id.toString());
+                    if (fs.existsSync(employeeDir)) {
+                      const files = fs.readdirSync(employeeDir);
+                      const imageFiles = files.filter(file => file.toLowerCase().includes('checkout') && (file.toLowerCase().endsWith('.jpg') || file.toLowerCase().endsWith('.jpeg')));
+                      if (imageFiles.length > 0) {
+                        const correctPath = '/uploads/employees/' + emp._id.toString() + '/' + imageFiles[0];
+                        emp.attendance.today.checkOutImage = correctPath;
+                        needsUpdate = true;
+                        console.log('🔧 Fixed check-out image path for', emp.name, ':', correctPath);
+                      }
+                    }
+                  }
+                }
+                
+                if (needsUpdate) {
+                  await emp.save();
+                  fixedCount++;
+                }
+              }
+              
+              console.log('✅ Fixed image paths for', fixedCount, 'employees');
+              process.exit(0);
+            })
+            .catch(err => {
+              console.error('❌ Image path fix error:', err);
+              process.exit(1);
+            });
+        \" &&
         echo '🚀 Starting backend server...' &&
         npm start
       "

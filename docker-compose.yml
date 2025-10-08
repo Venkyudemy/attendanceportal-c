@@ -69,6 +69,10 @@ services:
               console.log('❌ Error checking admin user:', err.message);
             });
         \" &&
+        echo '🔍 Verifying employee database and image storage...' &&
+        node check-employee.js &&
+        echo '📸 Ensuring uploads directory structure...' &&
+        mkdir -p /app/uploads/employees &&
         echo '🚀 Starting backend server...' &&
         npm start
       "
