@@ -73,6 +73,14 @@ const AttendanceImages = () => {
             date: todayRecord.date
           });
           
+          // Debug image URLs
+          if (todayRecord.checkInImage) {
+            console.log(`📸 Check-in image URL for ${emp.name}:`, window.location.origin + todayRecord.checkInImage);
+          }
+          if (todayRecord.checkOutImage) {
+            console.log(`📸 Check-out image URL for ${emp.name}:`, window.location.origin + todayRecord.checkOutImage);
+          }
+          
           // If has ANY image, include in results
           if (hasCheckInImage || hasCheckOutImage) {
             formattedData.push({
@@ -345,7 +353,16 @@ const AttendanceImages = () => {
                               src={`${emp.checkInImage}`}
                               alt="Check-in"
                               className="attendance-photo checkin"
+                              onError={(e) => {
+                                console.error('❌ Failed to load check-in image:', emp.checkInImage);
+                                e.target.style.display = 'none';
+                                e.target.nextSibling.style.display = 'block';
+                              }}
                             />
+                            <div className="image-error-fallback" style={{display: 'none', width: '100px', height: '100px', backgroundColor: '#f8f9fa', border: '2px dashed #dee2e6', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column'}}>
+                              <div style={{fontSize: '24px', marginBottom: '8px'}}>📷</div>
+                              <div style={{fontSize: '12px', color: '#6c757d', textAlign: 'center'}}>Image<br/>Not Found</div>
+                            </div>
                             <div className="photo-overlay">
                               <span>🔍 View Full Size</span>
                             </div>
@@ -378,7 +395,16 @@ const AttendanceImages = () => {
                               src={`${emp.checkOutImage}`}
                               alt="Check-out"
                               className="attendance-photo checkout"
+                              onError={(e) => {
+                                console.error('❌ Failed to load check-out image:', emp.checkOutImage);
+                                e.target.style.display = 'none';
+                                e.target.nextSibling.style.display = 'block';
+                              }}
                             />
+                            <div className="image-error-fallback" style={{display: 'none', width: '100px', height: '100px', backgroundColor: '#f8f9fa', border: '2px dashed #dee2e6', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column'}}>
+                              <div style={{fontSize: '24px', marginBottom: '8px'}}>📷</div>
+                              <div style={{fontSize: '12px', color: '#6c757d', textAlign: 'center'}}>Image<br/>Not Found</div>
+                            </div>
                             <div className="photo-overlay">
                               <span>🔍 View Full Size</span>
                             </div>
