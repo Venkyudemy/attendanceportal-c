@@ -40,6 +40,7 @@ services:
       - LATE_THRESHOLD_MINUTES=15
       - MAX_FILE_SIZE=5242880
       - UPLOAD_PATH=/app/uploads
+      - FRONTEND_ORIGIN=https://hzzeinfo.xyz
     depends_on:
       - mongo
     restart: unless-stopped

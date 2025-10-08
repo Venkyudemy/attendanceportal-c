@@ -1,6 +1,12 @@
 // Environment-aware API base URL with fallback
 const getApiBaseUrl = () => {
-  // Check for REACT_APP_API_URL environment variable first
+  // Check runtime environment variables first (from window.env)
+  if (window.env && window.env.REACT_APP_API_URL) {
+    console.log('Using runtime API URL:', window.env.REACT_APP_API_URL);
+    return window.env.REACT_APP_API_URL;
+  }
+  
+  // Check for REACT_APP_API_URL environment variable second
   if (process.env.REACT_APP_API_URL) {
     console.log('Using environment API URL:', process.env.REACT_APP_API_URL);
     return process.env.REACT_APP_API_URL;
