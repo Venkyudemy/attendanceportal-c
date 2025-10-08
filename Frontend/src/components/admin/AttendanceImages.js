@@ -24,7 +24,17 @@ const AttendanceImages = () => {
       setLoading(true);
       setError(null);
       
-      const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+      // Get API URL using the same method as api.js
+      const getApiBaseUrl = () => {
+        if (window.env && window.env.REACT_APP_API_URL) {
+          return window.env.REACT_APP_API_URL;
+        }
+        if (process.env.REACT_APP_API_URL) {
+          return process.env.REACT_APP_API_URL;
+        }
+        return process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:5000/api';
+      };
+      const API_URL = getApiBaseUrl();
       const token = localStorage.getItem('token');
 
       console.log('📸 Fetching attendance images for date:', selectedDate);
@@ -326,13 +336,13 @@ const AttendanceImages = () => {
                       {emp.checkInImage ? (
                         <div className="attendance-photo-container">
                           <a 
-                            href={`http://localhost:5000${emp.checkInImage}`} 
+                            href={`${emp.checkInImage}`} 
                             target="_blank" 
                             rel="noopener noreferrer"
                             className="photo-link"
                           >
                             <img
-                              src={`http://localhost:5000${emp.checkInImage}`}
+                              src={`${emp.checkInImage}`}
                               alt="Check-in"
                               className="attendance-photo checkin"
                             />
@@ -359,13 +369,13 @@ const AttendanceImages = () => {
                       {emp.checkOutImage ? (
                         <div className="attendance-photo-container">
                           <a 
-                            href={`http://localhost:5000${emp.checkOutImage}`} 
+                            href={`${emp.checkOutImage}`} 
                             target="_blank" 
                             rel="noopener noreferrer"
                             className="photo-link"
                           >
                             <img
-                              src={`http://localhost:5000${emp.checkOutImage}`}
+                              src={`${emp.checkOutImage}`}
                               alt="Check-out"
                               className="attendance-photo checkout"
                             />
