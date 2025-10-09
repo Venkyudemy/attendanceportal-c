@@ -13,10 +13,13 @@ services:
       - backend
     environment:
       - REACT_APP_API_URL=/api
+      - REACT_APP_UPLOADS_URL=/uploads
       - TZ=Asia/Kolkata
     restart: unless-stopped
     networks:
       - attendance-network
+    volumes:
+      - uploads_data:/usr/share/nginx/html/uploads
 
   backend:
     build:

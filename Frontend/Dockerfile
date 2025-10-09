@@ -23,20 +23,13 @@ ARG ENABLE_SSL=false
 COPY public/env-config.js .
 RUN cp env-config.js env.js
 
-# Copy HTTP or HTTPS nginx template based on build arg
-COPY nginx.conf.template /tmp/nginx-http.conf.template
-COPY nginx.ssl.conf.template /tmp/nginx-https.conf.template
+# Copy nginx configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-RUN if [ "$ENABLE_SSL" = "true" ]; then \
-      mkdir -p /etc/nginx/templates && \
-      cp /tmp/nginx-https.conf.template /etc/nginx/templates/default.conf.template; \
-    else \
-      mkdir -p /etc/nginx/templates && \
-      cp /tmp/nginx-http.conf.template /etc/nginx/templates/default.conf.template; \
-    fi
+# Create uploads directory and set permissions
+RUN mkdir -p /usr/share/nginx/html/uploads && \
+    chmod -R 755 /usr/share/nginx/html/uploads
 
 EXPOSE 80
 
-# Expose 443 only if SSL is enabled (harmless if not used)
-EXPOSE 443
 CMD ["nginx", "-g", "daemon off;"]
