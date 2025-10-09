@@ -87,7 +87,7 @@ services:
               console.log('✅ Connected to MongoDB');
               
               // Find all image files on disk
-              console.log('\n📁 SCANNING CAMERA CAPTURE IMAGES...');
+              console.log('\n📁 SCANNING CAMERA CAPTURE IMAGES BY EMPLOYEE NAME...');
               const uploadsDir = '/app/uploads/employees';
               const diskFiles = {};
               
@@ -103,7 +103,7 @@ services:
                       file.toLowerCase().endsWith('.jpg') || file.toLowerCase().endsWith('.jpeg')
                     );
                     diskFiles[empDir] = imageFiles;
-                    console.log('Employee ' + empDir + ' has camera capture images:', imageFiles);
+                    console.log('Employee directory ' + empDir + ' has camera capture images:', imageFiles);
                   }
                 }
               } else {
@@ -111,17 +111,55 @@ services:
                 fs.mkdirSync(uploadsDir, { recursive: true });
               }
               
-              // Get all employees
+              // Create employee name-based directories
+              console.log('\n📁 CREATING EMPLOYEE NAME-BASED DIRECTORIES...');
               const employees = await Employee.find({});
-              console.log('Found', employees.length, 'employees in database');
+              for (const emp of employees) {
+                const empId = emp._id.toString();
+                const empName = emp.name.replace(/[^a-zA-Z0-9]/g, '_'); // Clean name for folder
+                const empNameDir = path.join(uploadsDir, empName);
+                const empIdDir = path.join(uploadsDir, empId);
+                
+                console.log('👤 Processing employee:', emp.name, '-> Folder:', empName);
+                
+                // Create name-based directory if it doesn't exist
+                if (!fs.existsSync(empNameDir)) {
+                  fs.mkdirSync(empNameDir, { recursive: true });
+                  console.log('  ✅ Created employee name folder:', empNameDir);
+                }
+                
+                // Move images from ID-based folder to name-based folder
+                if (fs.existsSync(empIdDir)) {
+                  const files = fs.readdirSync(empIdDir);
+                  const imageFiles = files.filter(file => 
+                    file.toLowerCase().endsWith('.jpg') || file.toLowerCase().endsWith('.jpeg')
+                  );
+                  
+                  for (const imageFile of imageFiles) {
+                    const sourcePath = path.join(empIdDir, imageFile);
+                    const destPath = path.join(empNameDir, imageFile);
+                    
+                    if (!fs.existsSync(destPath)) {
+                      fs.copyFileSync(sourcePath, destPath);
+                      console.log('  📸 Copied image to name folder:', imageFile, '->', empName);
+                    }
+                  }
+                  
+                  // Update diskFiles to use name-based paths
+                  diskFiles[empName] = imageFiles;
+                }
+              }
               
+              // Process employees with name-based folders
+              console.log('\n👥 PROCESSING EMPLOYEES WITH NAME-BASED FOLDERS...');
               let totalFixed = 0;
               
-              // Fix each employee's camera capture images
+              // Fix each employee's camera capture images using name-based folders
               for (const emp of employees) {
                 console.log('\n👤 PROCESSING EMPLOYEE:', emp.name, '(ID:', emp._id + ')');
                 
                 const empId = emp._id.toString();
+                const empName = emp.name.replace(/[^a-zA-Z0-9]/g, '_'); // Clean name for folder
                 let needsUpdate = false;
                 
                 // Ensure attendance structure exists
@@ -132,63 +170,63 @@ services:
                   emp.attendance.today = {};
                 }
                 
-                // Check if employee has camera capture images on disk
-                if (diskFiles[empId] && diskFiles[empId].length > 0) {
-                  console.log('  📸 Found camera capture images:', diskFiles[empId]);
+                // Check if employee has camera capture images in name-based folder
+                if (diskFiles[empName] && diskFiles[empName].length > 0) {
+                  console.log('  📸 Found camera capture images in name folder:', diskFiles[empName]);
                   
                   // Find check-in camera capture image
-                  let checkinImage = diskFiles[empId].find(file => 
+                  let checkinImage = diskFiles[empName].find(file => 
                     file.toLowerCase().includes('checkin') || 
                     file.toLowerCase().includes('check-in') ||
                     file.toLowerCase().includes('in')
                   );
                   
                   // Find check-out camera capture image
-                  let checkoutImage = diskFiles[empId].find(file => 
+                  let checkoutImage = diskFiles[empName].find(file => 
                     file.toLowerCase().includes('checkout') || 
                     file.toLowerCase().includes('check-out') ||
                     file.toLowerCase().includes('out')
                   );
                   
                   // If no specific images found, use first two images
-                  if (!checkinImage && diskFiles[empId].length > 0) {
-                    checkinImage = diskFiles[empId][0];
+                  if (!checkinImage && diskFiles[empName].length > 0) {
+                    checkinImage = diskFiles[empName][0];
                     console.log('  🎯 Using first camera capture image as check-in:', checkinImage);
                   }
                   
-                  if (!checkoutImage && diskFiles[empId].length > 1) {
-                    checkoutImage = diskFiles[empId][1];
+                  if (!checkoutImage && diskFiles[empName].length > 1) {
+                    checkoutImage = diskFiles[empName][1];
                     console.log('  🎯 Using second camera capture image as check-out:', checkoutImage);
                   }
                   
-                  // Update check-in camera capture image path
+                  // Update check-in camera capture image path with employee name
                   if (checkinImage) {
-                    const checkinPath = '/uploads/employees/' + empId + '/' + checkinImage;
+                    const checkinPath = '/uploads/employees/' + empName + '/' + checkinImage;
                     if (emp.attendance.today.checkInImage !== checkinPath) {
                       emp.attendance.today.checkInImage = checkinPath;
                       needsUpdate = true;
-                      console.log('  ✅ SET check-in camera capture image:', checkinPath);
+                      console.log('  ✅ SET check-in camera capture image (by name):', checkinPath);
                       totalFixed++;
                     }
                   }
                   
-                  // Update check-out camera capture image path
+                  // Update check-out camera capture image path with employee name
                   if (checkoutImage) {
-                    const checkoutPath = '/uploads/employees/' + empId + '/' + checkoutImage;
+                    const checkoutPath = '/uploads/employees/' + empName + '/' + checkoutImage;
                     if (emp.attendance.today.checkOutImage !== checkoutPath) {
                       emp.attendance.today.checkOutImage = checkoutPath;
                       needsUpdate = true;
-                      console.log('  ✅ SET check-out camera capture image:', checkoutPath);
+                      console.log('  ✅ SET check-out camera capture image (by name):', checkoutPath);
                       totalFixed++;
                     }
                   }
                 } else {
-                  console.log('  ❌ No camera capture images found for this employee');
+                  console.log('  ❌ No camera capture images found for employee:', emp.name);
                 }
                 
                 if (needsUpdate) {
                   await emp.save();
-                  console.log('  💾 Saved employee record with camera capture images');
+                  console.log('  💾 Saved employee record with name-based camera capture images');
                 }
               }
               
@@ -196,7 +234,7 @@ services:
               console.log('📊 Total camera capture image paths fixed:', totalFixed);
               
               // Final verification
-              console.log('\n🔍 FINAL VERIFICATION - Camera capture images will now display:');
+              console.log('\n🔍 FINAL VERIFICATION - Camera capture images by employee name will now display:');
               const finalEmployees = await Employee.find({});
               for (const emp of finalEmployees) {
                 if (emp.attendance?.today) {
@@ -204,11 +242,11 @@ services:
                   console.log('\n👤 Employee:', emp.name);
                   if (today.checkInImage) {
                     const exists = fs.existsSync(path.join('/app', today.checkInImage));
-                    console.log('  📸 Check-in camera capture:', today.checkInImage, exists ? '✅ WILL DISPLAY' : '❌');
+                    console.log('  📸 Check-in camera capture (by name):', today.checkInImage, exists ? '✅ WILL DISPLAY' : '❌');
                   }
                   if (today.checkOutImage) {
                     const exists = fs.existsSync(path.join('/app', today.checkOutImage));
-                    console.log('  📸 Check-out camera capture:', today.checkOutImage, exists ? '✅ WILL DISPLAY' : '❌');
+                    console.log('  📸 Check-out camera capture (by name):', today.checkOutImage, exists ? '✅ WILL DISPLAY' : '❌');
                   }
                 }
               }

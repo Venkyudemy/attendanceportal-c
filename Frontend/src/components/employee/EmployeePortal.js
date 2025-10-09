@@ -280,10 +280,11 @@ const EmployeePortal = ({ currentUser }) => {
         return;
       }
 
-      // Create FormData to upload image
+      // Create FormData to upload image with employee name
       const formData = new FormData();
       formData.append('image', imageBlob, `checkin_${employeeId}_${Date.now()}.jpg`);
       formData.append('type', 'checkin');
+      formData.append('employeeName', currentUser.name || 'unknown'); // Add employee name for folder creation
 
       // Get API URL using the same method as api.js
       const getApiBaseUrl = () => {
@@ -411,10 +412,11 @@ const EmployeePortal = ({ currentUser }) => {
         return;
       }
       
-      // Create FormData to upload image
+      // Create FormData to upload image with employee name
       const formData = new FormData();
       formData.append('image', imageBlob, `checkout_${employeeId}_${Date.now()}.jpg`);
       formData.append('type', 'checkout');
+      formData.append('employeeName', currentUser.name || 'unknown'); // Add employee name for folder creation
 
       // Get API URL using the same method as api.js
       const getApiBaseUrl = () => {
