@@ -357,14 +357,8 @@ const AttendanceImages = () => {
                               onError={(e) => {
                                 console.error('❌ Failed to load check-in image:', emp.checkInImage);
                                 console.error('   Full URL:', emp.checkInImage);
-                                e.target.style.display = 'none';
-                                e.target.nextSibling.style.display = 'flex';
                               }}
                             />
-                            <div className="image-error-fallback" style={{display: 'none', width: '100px', height: '100px', backgroundColor: '#f8f9fa', border: '2px dashed #dee2e6', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column'}}>
-                              <div style={{fontSize: '24px', marginBottom: '8px'}}>📷</div>
-                              <div style={{fontSize: '12px', color: '#6c757d', textAlign: 'center'}}>Image<br/>Not Found</div>
-                            </div>
                             <div className="photo-overlay">
                               <span>🔍 View Full Size</span>
                             </div>
@@ -400,14 +394,8 @@ const AttendanceImages = () => {
                               onError={(e) => {
                                 console.error('❌ Failed to load check-out image:', emp.checkOutImage);
                                 console.error('   Full URL:', emp.checkOutImage);
-                                e.target.style.display = 'none';
-                                e.target.nextSibling.style.display = 'flex';
                               }}
                             />
-                            <div className="image-error-fallback" style={{display: 'none', width: '100px', height: '100px', backgroundColor: '#f8f9fa', border: '2px dashed #dee2e6', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column'}}>
-                              <div style={{fontSize: '24px', marginBottom: '8px'}}>📷</div>
-                              <div style={{fontSize: '12px', color: '#6c757d', textAlign: 'center'}}>Image<br/>Not Found</div>
-                            </div>
                             <div className="photo-overlay">
                               <span>🔍 View Full Size</span>
                             </div>
