@@ -11,36 +11,30 @@ if (!fs.existsSync(baseUploadsDir)) {
   console.log('✅ Created base uploads directory:', baseUploadsDir);
 }
 
-// Configure multer storage with employee name-based folders
+// Configure multer storage with employee-specific folders
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    // Create employee name-based folder
+    // Create employee-specific folder
     const employeeId = req.params.id || 'unknown';
-    const employeeName = req.body.employeeName || 'unknown';
-    
-    // Clean employee name for folder (remove special characters)
-    const cleanEmployeeName = employeeName.replace(/[^a-zA-Z0-9]/g, '_');
-    const employeeDir = path.join(baseUploadsDir, cleanEmployeeName);
+    const employeeDir = path.join(baseUploadsDir, employeeId);
     
     // Create directory if it doesn't exist
     if (!fs.existsSync(employeeDir)) {
       fs.mkdirSync(employeeDir, { recursive: true });
-      console.log(`✅ Created employee name folder: ${employeeDir} for ${employeeName}`);
+      console.log(`✅ Created employee folder: ${employeeDir}`);
     }
     
     cb(null, employeeDir);
   },
   filename: function (req, file, cb) {
-    // Create filename with employee name, date and type: employeeName_checkin_2024-01-15_timestamp.jpg
+    // Create filename with date and type: checkin_2024-01-15_timestamp.jpg
     const now = new Date();
     const dateStr = now.toISOString().split('T')[0]; // YYYY-MM-DD
     const timeStr = now.toTimeString().split(' ')[0].replace(/:/g, '-'); // HH-MM-SS
     const type = req.body.type || 'checkin'; // 'checkin' or 'checkout'
-    const employeeName = req.body.employeeName || 'unknown';
-    const cleanEmployeeName = employeeName.replace(/[^a-zA-Z0-9]/g, '_');
-    const filename = `${cleanEmployeeName}_${type}_${dateStr}_${timeStr}.jpg`;
+    const filename = `${type}_${dateStr}_${timeStr}.jpg`;
     
-    console.log(`📸 Saving image by employee name: ${filename}`);
+    console.log(`📸 Saving image: ${filename}`);
     cb(null, filename);
   }
 });

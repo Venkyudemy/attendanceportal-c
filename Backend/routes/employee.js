@@ -1556,11 +1556,10 @@ router.post('/:id/check-in-with-image', upload.single('image'), async (req, res)
       });
     }
 
-    // Get uploaded image path with employee name-based folder structure
+    // Get uploaded image path with employee folder structure
     const employeeId = req.params.id;
-    const employeeName = employee.name.replace(/[^a-zA-Z0-9]/g, '_'); // Clean name for folder
-    const imagePath = req.file ? `/uploads/employees/${employeeName}/${req.file.filename}` : null;
-    console.log('📸 Image uploaded by employee name:', imagePath);
+    const imagePath = req.file ? `/uploads/employees/${employeeId}/${req.file.filename}` : null;
+    console.log('📸 Image uploaded:', imagePath);
 
     // Use server local time to match frontend display
     const now = new Date();
@@ -1710,11 +1709,10 @@ router.post('/:id/check-out-with-image', upload.single('image'), async (req, res
       });
     }
 
-    // Get uploaded image path with employee name-based folder structure
+    // Get uploaded image path with employee folder structure
     const employeeId = req.params.id;
-    const employeeName = employee.name.replace(/[^a-zA-Z0-9]/g, '_'); // Clean name for folder
-    const imagePath = req.file ? `/uploads/employees/${employeeName}/${req.file.filename}` : null;
-    console.log('📸 Check-out image uploaded by employee name:', imagePath);
+    const imagePath = req.file ? `/uploads/employees/${employeeId}/${req.file.filename}` : null;
+    console.log('📸 Check-out image uploaded:', imagePath);
 
     // Use server local time to match frontend display
     const now = new Date();
