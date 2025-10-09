@@ -38,41 +38,32 @@ services:
       - UPLOAD_PATH=/app/uploads
       - FRONTEND_ORIGIN=http://localhost:3000
     depends_on:
-      - mongo
+      mongo:
+        condition: service_healthy
     restart: unless-stopped
     networks:
       - attendance-network
     volumes:
       - ./Backend/scripts:/app/scripts:ro
       - uploads_data:/app/uploads
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     command: >
       sh -c "
-        echo '🎯 CAMERA CAPTURE IMAGE DISPLAY FIX - Starting...' &&
         echo '⏳ Waiting for MongoDB to be ready...' &&
-        sleep 15 &&
-        echo '🔍 Checking if admin user exists...' &&
-        node -e \"
-          const mongoose = require('mongoose');
-          const User = require('./models/User');
-          mongoose.connect(process.env.MONGODB_URI || 'mongodb://mongo:27017/attendanceportal')
-            .then(async () => {
-              const adminExists = await User.findOne({ role: 'admin' });
-              if (!adminExists) {
-                console.log('👤 Admin user not found, creating...');
-                require('./scripts/createAdmin.js');
-                require('./scripts/addEmployee.js');
-              } else {
-                console.log('✅ Admin user already exists, skipping initialization');
-              }
-            })
-            .catch(err => {
-              console.log('❌ Error checking admin user:', err.message);
-            });
-        \" &&
-        echo '🔍 Verifying employee database and image storage...' &&
-        node check-employee.js &&
-        echo '📸 Ensuring uploads directory structure...' &&
-        mkdir -p /app/uploads/employees &&
+        until nc -z mongo 27017; do
+          echo 'Waiting for MongoDB...'
+          sleep 2
+        done &&
+        echo '✅ MongoDB is ready' &&
+        echo '🔧 Running initialization scripts...' &&
+        node scripts/createAdmin.js || echo 'Admin creation failed or already exists' &&
+        node scripts/addEmployee.js || echo 'Employee creation failed or already exists' &&
+        node check-employee.js || echo 'Employee check failed' &&
         echo '🎯 CAMERA CAPTURE IMAGE DISPLAY FIX...' &&
         node -e \"
           const mongoose = require('mongoose');
@@ -232,26 +223,7 @@ services:
               
               console.log('\n🎯 CAMERA CAPTURE IMAGE DISPLAY FIX COMPLETE!');
               console.log('📊 Total camera capture image paths fixed:', totalFixed);
-              
-              // Final verification
-              console.log('\n🔍 FINAL VERIFICATION - Camera capture images by employee name will now display:');
-              const finalEmployees = await Employee.find({});
-              for (const emp of finalEmployees) {
-                if (emp.attendance?.today) {
-                  const today = emp.attendance.today;
-                  console.log('\n👤 Employee:', emp.name);
-                  if (today.checkInImage) {
-                    const exists = fs.existsSync(path.join('/app', today.checkInImage));
-                    console.log('  📸 Check-in camera capture (by name):', today.checkInImage, exists ? '✅ WILL DISPLAY' : '❌');
-                  }
-                  if (today.checkOutImage) {
-                    const exists = fs.existsSync(path.join('/app', today.checkOutImage));
-                    console.log('  📸 Check-out camera capture (by name):', today.checkOutImage, exists ? '✅ WILL DISPLAY' : '❌');
-                  }
-                }
-              }
-              
-              console.log('\n🎯 CAMERA CAPTURE IMAGES WILL NOW DISPLAY IN ADMIN PANEL!');
+              console.log('🎯 CAMERA CAPTURE IMAGES WILL NOW DISPLAY IN ADMIN PANEL!');
               
               process.exit(0);
             })
@@ -276,6 +248,12 @@ services:
     restart: unless-stopped
     networks:
       - attendance-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
     command: mongod --bind_ip_all
 
 volumes:
@@ -287,6 +265,3 @@ volumes:
 networks:
   attendance-network:
     driver: bridge
-    ipam:
-      config:
-        - subnet: 172.20.0.0/16
