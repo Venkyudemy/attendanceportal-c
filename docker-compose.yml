@@ -17,7 +17,6 @@ services:
     restart: unless-stopped
     networks:
       - attendance-network
-    # Remove volume mount - images are served by backend directly
 
   backend:
     build:
@@ -48,7 +47,7 @@ services:
       - uploads_data:/app/uploads
     command: >
       sh -c "
-        echo '🎯 CAMERA IMAGE DISPLAY FIX - Starting...' &&
+        echo '🎯 CAMERA CAPTURE IMAGE DISPLAY FIX - Starting...' &&
         echo '⏳ Waiting for MongoDB to be ready...' &&
         sleep 15 &&
         echo '🔍 Checking if admin user exists...' &&
@@ -74,21 +73,21 @@ services:
         node check-employee.js &&
         echo '📸 Ensuring uploads directory structure...' &&
         mkdir -p /app/uploads/employees &&
-        echo '🎯 CAMERA IMAGE DISPLAY FIX - Making images visible...' &&
+        echo '🎯 CAMERA CAPTURE IMAGE DISPLAY FIX...' &&
         node -e \"
           const mongoose = require('mongoose');
           const Employee = require('./models/Employee');
           const fs = require('fs');
           const path = require('path');
 
-          console.log('🎯 CAMERA IMAGE DISPLAY FIX - Starting...');
+          console.log('🎯 CAMERA CAPTURE IMAGE DISPLAY FIX - Starting...');
 
           mongoose.connect(process.env.MONGODB_URI || 'mongodb://mongo:27017/attendanceportal')
             .then(async () => {
               console.log('✅ Connected to MongoDB');
               
-              // Step 1: Find ALL camera capture images on disk
-              console.log('\n📁 STEP 1: FINDING ALL CAMERA CAPTURE IMAGES...');
+              // Find all image files on disk
+              console.log('\n📁 SCANNING CAMERA CAPTURE IMAGES...');
               const uploadsDir = '/app/uploads/employees';
               const diskFiles = {};
               
@@ -112,14 +111,13 @@ services:
                 fs.mkdirSync(uploadsDir, { recursive: true });
               }
               
-              // Step 2: Get ALL employees from database
-              console.log('\n👥 STEP 2: GETTING ALL EMPLOYEES FROM DATABASE...');
+              // Get all employees
               const employees = await Employee.find({});
               console.log('Found', employees.length, 'employees in database');
               
               let totalFixed = 0;
               
-              // Step 3: Fix each employee's camera capture images
+              // Fix each employee's camera capture images
               for (const emp of employees) {
                 console.log('\n👤 PROCESSING EMPLOYEE:', emp.name, '(ID:', emp._id + ')');
                 
@@ -194,10 +192,10 @@ services:
                 }
               }
               
-              console.log('\n🎯 CAMERA IMAGE DISPLAY FIX COMPLETE!');
+              console.log('\n🎯 CAMERA CAPTURE IMAGE DISPLAY FIX COMPLETE!');
               console.log('📊 Total camera capture image paths fixed:', totalFixed);
               
-              // Step 4: Final verification - show what will be displayed
+              // Final verification
               console.log('\n🔍 FINAL VERIFICATION - Camera capture images will now display:');
               const finalEmployees = await Employee.find({});
               for (const emp of finalEmployees) {
@@ -220,7 +218,7 @@ services:
               process.exit(0);
             })
             .catch(err => {
-              console.error('❌ Camera image display fix error:', err);
+              console.error('❌ Camera capture image display fix error:', err);
               process.exit(1);
             });
         \" &&
