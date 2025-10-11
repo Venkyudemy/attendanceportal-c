@@ -40,3 +40,5 @@ echo.
 echo 🎉 This quick fix will make images visible!
 echo.
 pause
+
+

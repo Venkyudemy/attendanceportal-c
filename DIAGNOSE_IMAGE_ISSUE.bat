@@ -82,3 +82,5 @@ echo 4. Do the database paths match actual files?
 echo 5. Is the API returning image paths?
 echo.
 pause
+
+

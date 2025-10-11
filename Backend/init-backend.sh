@@ -12,3 +12,5 @@ node scripts/addEmployee.js
 node check-employee.js
 
 echo "✅ Initialization complete!"
+
+

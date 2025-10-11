@@ -39,3 +39,5 @@ echo.
 echo 🎉 Images should now display correctly!
 echo.
 pause
+
+

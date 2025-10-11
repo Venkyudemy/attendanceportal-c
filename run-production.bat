@@ -84,3 +84,5 @@ echo 🐛 If issues, check logs:
 echo docker-compose -f docker-compose.prod.yml logs -f
 echo.
 pause
+
+

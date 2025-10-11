@@ -59,3 +59,5 @@ echo 2. Are image paths being saved in database?
 echo 3. Are the paths pointing to existing files?
 echo.
 pause
+
+

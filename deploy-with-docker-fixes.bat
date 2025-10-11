@@ -67,3 +67,5 @@ echo - Verify image storage: docker-compose -f docker-compose.prod.yml exec back
 echo - Test API: curl -k https://localhost/api/health
 echo.
 pause
+
+

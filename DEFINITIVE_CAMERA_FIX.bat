@@ -272,3 +272,5 @@ echo.
 echo 🎉 This definitive fix WILL solve your camera capture image issue!
 echo.
 pause
+
+

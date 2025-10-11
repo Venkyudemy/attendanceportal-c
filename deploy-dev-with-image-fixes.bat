@@ -73,3 +73,5 @@ echo - Verify image storage: docker-compose exec backend find /app/uploads -name
 echo - Test API: curl http://localhost:5000/api/health
 echo.
 pause
+
+

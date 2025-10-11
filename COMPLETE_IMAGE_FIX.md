@@ -141,3 +141,5 @@ fix-image-not-found.bat
 ```
 
 **Your employee camera capture images will now display perfectly in the admin panel! 🎯**
+
+

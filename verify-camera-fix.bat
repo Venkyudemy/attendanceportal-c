@@ -47,3 +47,5 @@ echo 3. Try camera capture for check-in/check-out
 echo 4. Check if images appear in admin panel
 echo.
 pause
+
+

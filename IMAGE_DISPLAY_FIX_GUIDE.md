@@ -156,3 +156,5 @@ Check-out: https://hzzeinfo.xyz/uploads/employees/[EMPLOYEE_ID]/checkout_2025-01
 ## 🎉 **Your Images Will Now Display Perfectly!**
 
 Run the fix script and your admin panel will show beautiful thumbnail images that you can click to view full size! 🚀
+
+

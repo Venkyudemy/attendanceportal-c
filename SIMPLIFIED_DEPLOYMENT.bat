@@ -55,3 +55,5 @@ echo.
 echo 🎉 NO MORE INFINITE LOOPS - BACKEND WILL START PROPERLY!
 echo.
 pause
+
+

@@ -186,3 +186,5 @@ echo.
 echo 🎉 This immediate fix WILL make images visible!
 echo.
 pause
+
+

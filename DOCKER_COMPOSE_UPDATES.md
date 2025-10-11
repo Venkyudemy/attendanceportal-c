@@ -182,3 +182,5 @@ The docker-compose files now include:
 - ✅ **Directory structure creation**
 
 **Deploy with the updated configuration and your image display issues will be completely resolved! 🚀**
+
+

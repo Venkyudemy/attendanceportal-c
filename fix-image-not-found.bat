@@ -171,3 +171,5 @@ echo - Verify the image files actually exist
 echo - Test direct image URLs manually
 echo.
 pause
+
+

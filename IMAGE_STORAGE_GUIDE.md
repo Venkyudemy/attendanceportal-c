@@ -187,3 +187,5 @@ After running the fixes:
 - ✅ Images are accessible via HTTPS URLs
 
 **Check your admin panel at: https://hzzeinfo.xyz/attendance-images** 📸
+
+

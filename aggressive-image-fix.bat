@@ -247,3 +247,5 @@ echo - Image files: docker-compose exec backend find /app/uploads -name "*.jpg"
 echo - Database paths: docker-compose exec backend node check-employee.js
 echo.
 pause
+
+

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './AttendanceImages.css';
+import AttendanceCalendar from './AttendanceCalendar';
 
 const AttendanceImages = () => {
   const [attendanceData, setAttendanceData] = useState([]);
@@ -15,6 +16,7 @@ const AttendanceImages = () => {
   });
   const [error, setError] = useState(null);
   const [debugInfo, setDebugInfo] = useState(null);
+  const [calendarModal, setCalendarModal] = useState({ isOpen: false, employeeId: null });
 
   useEffect(() => {
     fetchAttendanceImages();
@@ -154,6 +156,15 @@ const AttendanceImages = () => {
       case 'On Leave': return 'info';
       default: return 'secondary';
     }
+  };
+
+  const handleEmployeeRowClick = (employeeId) => {
+    console.log('📅 Opening calendar for employee:', employeeId);
+    setCalendarModal({ isOpen: true, employeeId });
+  };
+
+  const handleCloseCalendar = () => {
+    setCalendarModal({ isOpen: false, employeeId: null });
   };
 
   if (loading) {
@@ -322,7 +333,7 @@ const AttendanceImages = () => {
               </thead>
               <tbody>
                 {attendanceData.map((emp, index) => (
-                  <tr key={emp.id}>
+                  <tr key={emp.id} className="employee-row" onClick={() => handleEmployeeRowClick(emp.id)}>
                     <td className="text-center">{index + 1}</td>
                     <td>
                       <div className="employee-info">
@@ -333,6 +344,7 @@ const AttendanceImages = () => {
                           <div className="employee-name">{emp.name}</div>
                           <div className="employee-meta">{emp.department}</div>
                           <div className="employee-id">ID: {emp.employeeId || emp.id.substring(0, 8)}</div>
+                          <div className="calendar-hint">📅 Click to view monthly calendar</div>
                         </div>
                       </div>
                     </td>
@@ -455,6 +467,13 @@ const AttendanceImages = () => {
           />
         </div>
       )}
+
+      {/* Calendar Modal */}
+      <AttendanceCalendar
+        employeeId={calendarModal.employeeId}
+        isOpen={calendarModal.isOpen}
+        onClose={handleCloseCalendar}
+      />
     </div>
   );
 };

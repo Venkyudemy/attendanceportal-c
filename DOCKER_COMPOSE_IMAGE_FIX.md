@@ -193,3 +193,5 @@ The updated docker-compose.yml will automatically:
 - ✅ **Display images properly** in admin panel
 
 **Deploy with the updated docker-compose.yml and your "Image Not Found" issue will be completely resolved! 🚀**
+
+

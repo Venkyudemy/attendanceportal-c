@@ -179,6 +179,17 @@
   background: #f8f9fa;
 }
 
+.employee-row {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.employee-row:hover {
+  background: #f0f4ff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
 .images-table td {
   padding: 20px 15px;
   vertical-align: top;
@@ -228,6 +239,19 @@
 .employee-id {
   font-size: 11px;
   color: #999;
+}
+
+.calendar-hint {
+  font-size: 10px;
+  color: #667eea;
+  font-weight: 500;
+  margin-top: 4px;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.employee-row:hover .calendar-hint {
+  opacity: 1;
 }
 
 .status-badge {

@@ -206,3 +206,5 @@ echo - Test direct image access in browser
 echo - Check browser console for errors
 echo.
 pause
+
+

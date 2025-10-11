@@ -97,3 +97,5 @@ echo 3. Do the image files exist on disk?
 echo 4. Are the paths accessible?
 echo.
 pause
+
+

@@ -54,3 +54,5 @@ echo 🐛 If issues, check logs:
 echo docker-compose logs -f
 echo.
 pause
+
+

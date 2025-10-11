@@ -84,3 +84,5 @@ echo   - URL: https://hzzeinfo.xyz/attendance-images
 echo   - Should show captured images in table format
 echo.
 pause
+
+
