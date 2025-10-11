@@ -177,23 +177,23 @@ const AttendanceCalendar = ({ employeeId, isOpen, onClose }) => {
             </div>
 
             <div className="calendar-legend">
-              <h4>Legend:</h4>
+              <h4>📋 Calendar Legend:</h4>
               <div className="legend-items">
                 <div className="legend-item">
                   <div className="legend-color present"></div>
-                  <span>Present</span>
+                  <span>✅ Present</span>
                 </div>
                 <div className="legend-item">
                   <div className="legend-color late"></div>
-                  <span>Late</span>
+                  <span>⏰ Late</span>
                 </div>
                 <div className="legend-item">
                   <div className="legend-color absent"></div>
-                  <span>Absent</span>
+                  <span>❌ Absent</span>
                 </div>
                 <div className="legend-item">
                   <div className="legend-color weekend"></div>
-                  <span>Weekend</span>
+                  <span>🏖️ Weekend</span>
                 </div>
                 <div className="legend-item">
                   <span className="legend-photo">📸</span>
@@ -215,7 +215,7 @@ const AttendanceCalendar = ({ employeeId, isOpen, onClose }) => {
                     key={index} 
                     className={`calendar-day ${getStatusColor(dayData.status, dayData.isWeekend)} ${
                       dayData.hasAttendance ? 'has-attendance' : 'no-attendance'
-                    } ${dayData.isWeekend ? 'weekend-day' : ''}`}
+                    }`}
                   >
                     <div className="day-number">{dayData.day}</div>
                     
