@@ -305,115 +305,66 @@
 .attendance-info {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   align-items: center;
   flex: 1;
   justify-content: center;
+  padding: 4px;
 }
 
-.status-indicator {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.status-time-display {
+  text-align: center;
+  margin-bottom: 4px;
 }
 
-.status-icon {
-  font-size: 20px;
+.status-text {
+  font-size: 10px;
+  color: #333;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.photo-indicators {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-  margin-top: 10px;
-}
-
-.photo-indicator {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
-  min-height: 40px;
-}
-
-.photo-indicator.checkin {
-  border-left: 3px solid #28a745;
-}
-
-.photo-indicator.checkout {
-  border-left: 3px solid #dc3545;
-}
-
-.day-photo {
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-  border: 3px solid rgba(0, 0, 0, 0.2);
-  flex-shrink: 0;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
-}
-
-.day-photo:hover {
-  transform: scale(1.2);
-  z-index: 10;
-  position: relative;
-}
-
-.time-info {
+.photo-grid {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  flex: 1;
-}
-
-.time-label {
-  font-size: 11px;
-  color: #666;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 2px;
-}
-
-.photo-time {
-  font-size: 13px;
-  color: #333;
-  font-weight: 600;
-  text-align: center;
-}
-
-.no-photo-indicator {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  align-items: center;
-  padding: 8px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 6px;
   width: 100%;
-  margin-top: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  align-items: center;
 }
 
-.no-photo-text {
-  font-size: 11px;
-  color: #999;
-  font-weight: 600;
+.calendar-photo {
+  width: 35px;
+  height: 35px;
+  object-fit: cover;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.attendance-time {
-  font-size: 11px;
+.checkin-photo {
+  border-color: #28a745;
+}
+
+.checkout-photo {
+  border-color: #dc3545;
+}
+
+.time-info-only {
+  font-size: 9px;
   color: #666;
   text-align: center;
   font-weight: 500;
 }
+
+.calendar-photo:hover {
+  transform: scale(1.1);
+  z-index: 10;
+  position: relative;
+}
+
 
 .hours-indicator {
   background: #e3f2fd;
@@ -609,17 +560,13 @@
     font-size: 16px;
   }
   
-  .day-photo {
-    width: 50px;
-    height: 50px;
+  .calendar-photo {
+    width: 30px;
+    height: 30px;
   }
   
-  .photo-time {
-    font-size: 12px;
-  }
-  
-  .time-label {
-    font-size: 10px;
+  .status-text {
+    font-size: 9px;
   }
   
   .calendar-legend {
@@ -641,21 +588,13 @@
     font-size: 14px;
   }
   
-  .status-icon {
-    font-size: 16px;
+  .calendar-photo {
+    width: 28px;
+    height: 28px;
   }
   
-  .day-photo {
-    width: 45px;
-    height: 45px;
-  }
-  
-  .photo-time {
-    font-size: 11px;
-  }
-  
-  .time-label {
-    font-size: 9px;
+  .status-text {
+    font-size: 8px;
   }
   
   .monthly-stats {

@@ -232,75 +232,65 @@ const AttendanceCalendar = ({ employeeId, isOpen, onClose }) => {
                       )}
                     </div>
                     
-                    {dayData.hasAttendance && (
-                      <div className="attendance-info">
-                        <div className="status-indicator">
-                          <span className="status-icon">{getStatusIcon(dayData.status)}</span>
-                        </div>
-                        
-                         <div className="photo-indicators">
-                           {/* ALWAYS show check-in photo if available */}
-                           {dayData.checkInImage && (
-                             <div className="photo-indicator checkin">
+                     {dayData.hasAttendance && (
+                       <div className="attendance-info">
+                         {/* Status and Time Display */}
+                         <div className="status-time-display">
+                           <span className="status-text">
+                             {dayData.status === 'Late' && dayData.checkIn && 
+                               `Late In ${formatTime(dayData.checkIn)}`
+                             }
+                             {dayData.status === 'Present' && 'Present'}
+                             {dayData.status === 'Absent' && 'Absent'}
+                             {dayData.status === 'On Leave' && 'On Leave'}
+                           </span>
+                         </div>
+                         
+                         {/* Photo Grid - Show BOTH check-in and check-out images */}
+                         {(dayData.checkInImage || dayData.checkOutImage) && (
+                           <div className="photo-grid">
+                             {dayData.checkInImage && (
                                <img 
                                  src={dayData.checkInImage} 
                                  alt="Check-in"
-                                 className="day-photo"
+                                 className="calendar-photo checkin-photo"
                                  onClick={() => setPreviewImage({
                                    src: dayData.checkInImage,
                                    type: 'Check-in',
                                    time: dayData.checkIn,
                                    date: dayData.date
                                  })}
+                                 title={`Check-in: ${formatTime(dayData.checkIn)}`}
                                />
-                               <div className="time-info">
-                                 <span className="time-label">CHECK-IN</span>
-                                 <span className="photo-time">{formatTime(dayData.checkIn)}</span>
-                               </div>
-                             </div>
-                           )}
-                           
-                           {/* ALWAYS show check-out photo if available */}
-                           {dayData.checkOutImage && (
-                             <div className="photo-indicator checkout">
+                             )}
+                             
+                             {dayData.checkOutImage && (
                                <img 
                                  src={dayData.checkOutImage} 
                                  alt="Check-out"
-                                 className="day-photo"
+                                 className="calendar-photo checkout-photo"
                                  onClick={() => setPreviewImage({
                                    src: dayData.checkOutImage,
                                    type: 'Check-out',
                                    time: dayData.checkOut,
                                    date: dayData.date
                                  })}
+                                 title={`Check-out: ${formatTime(dayData.checkOut)}`}
                                />
-                               <div className="time-info">
-                                 <span className="time-label">CHECK-OUT</span>
-                                 <span className="photo-time">{formatTime(dayData.checkOut)}</span>
-                               </div>
-                             </div>
-                           )}
-                           
-                           {/* Show "No Photos" only if BOTH are missing */}
-                           {!dayData.checkInImage && !dayData.checkOutImage && (
-                             <div className="no-photo-indicator">
-                               <span className="no-photo-text">No Photos Available</span>
-                               <span className="attendance-time">
-                                 {dayData.checkIn && `In: ${formatTime(dayData.checkIn)}`}
-                                 {dayData.checkIn && dayData.checkOut && ' • '}
-                                 {dayData.checkOut && `Out: ${formatTime(dayData.checkOut)}`}
-                               </span>
-                             </div>
-                           )}
-                         </div>
-                        
-                        {dayData.hours > 0 && (
-                          <div className="hours-indicator">
-                            {dayData.hours.toFixed(1)}h
-                          </div>
-                        )}
-                      </div>
-                    )}
+                             )}
+                           </div>
+                         )}
+                         
+                         {/* Show time info if no photos */}
+                         {!dayData.checkInImage && !dayData.checkOutImage && (
+                           <div className="time-info-only">
+                             {dayData.checkIn && `In: ${formatTime(dayData.checkIn)}`}
+                             {dayData.checkIn && dayData.checkOut && ' • '}
+                             {dayData.checkOut && `Out: ${formatTime(dayData.checkOut)}`}
+                           </div>
+                         )}
+                       </div>
+                     )}
                   </div>
                 ))}
               </div>
