@@ -176,6 +176,32 @@ const AttendanceCalendar = ({ employeeId, isOpen, onClose }) => {
               </div>
             </div>
 
+            <div className="calendar-legend">
+              <h4>Legend:</h4>
+              <div className="legend-items">
+                <div className="legend-item">
+                  <div className="legend-color present"></div>
+                  <span>Present</span>
+                </div>
+                <div className="legend-item">
+                  <div className="legend-color late"></div>
+                  <span>Late</span>
+                </div>
+                <div className="legend-item">
+                  <div className="legend-color absent"></div>
+                  <span>Absent</span>
+                </div>
+                <div className="legend-item">
+                  <div className="legend-color weekend"></div>
+                  <span>Weekend</span>
+                </div>
+                <div className="legend-item">
+                  <span className="legend-photo">📸</span>
+                  <span>Has Photos</span>
+                </div>
+              </div>
+            </div>
+
             <div className="calendar-grid">
               <div className="calendar-weekdays">
                 {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
@@ -189,7 +215,7 @@ const AttendanceCalendar = ({ employeeId, isOpen, onClose }) => {
                     key={index} 
                     className={`calendar-day ${getStatusColor(dayData.status, dayData.isWeekend)} ${
                       dayData.hasAttendance ? 'has-attendance' : 'no-attendance'
-                    }`}
+                    } ${dayData.isWeekend ? 'weekend-day' : ''}`}
                   >
                     <div className="day-number">{dayData.day}</div>
                     
@@ -214,7 +240,10 @@ const AttendanceCalendar = ({ employeeId, isOpen, onClose }) => {
                                     date: dayData.date
                                   })}
                                 />
-                                <span className="photo-time">{formatTime(dayData.checkIn)}</span>
+                                <div className="time-info">
+                                  <span className="time-label">IN</span>
+                                  <span className="photo-time">{formatTime(dayData.checkIn)}</span>
+                                </div>
                               </div>
                             )}
                             
@@ -231,7 +260,10 @@ const AttendanceCalendar = ({ employeeId, isOpen, onClose }) => {
                                     date: dayData.date
                                   })}
                                 />
-                                <span className="photo-time">{formatTime(dayData.checkOut)}</span>
+                                <div className="time-info">
+                                  <span className="time-label">OUT</span>
+                                  <span className="photo-time">{formatTime(dayData.checkOut)}</span>
+                                </div>
                               </div>
                             )}
                           </div>

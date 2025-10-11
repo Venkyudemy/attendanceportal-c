@@ -188,8 +188,8 @@
 .calendar-weekdays {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
-  margin-bottom: 12px;
+  gap: 10px;
+  margin-bottom: 15px;
 }
 
 .weekday-header {
@@ -205,18 +205,20 @@
 .calendar-days {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
+  gap: 10px;
 }
 
 .calendar-day {
-  min-height: 120px;
+  min-height: 140px;
   border: 2px solid #e0e0e0;
   border-radius: 12px;
-  padding: 8px;
+  padding: 12px;
   background: white;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .calendar-day:hover {
@@ -251,23 +253,35 @@
   background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
 }
 
+.calendar-day.weekend-day {
+  border-color: #6c757d;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.calendar-day.weekend-day .day-number {
+  color: #6c757d;
+}
+
 .calendar-day.no-attendance {
   opacity: 0.6;
 }
 
 .day-number {
   font-weight: 700;
-  font-size: 16px;
+  font-size: 18px;
   color: #333;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   text-align: center;
+  flex-shrink: 0;
 }
 
 .attendance-info {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
   align-items: center;
+  flex: 1;
+  justify-content: center;
 }
 
 .status-indicator {
@@ -277,23 +291,26 @@
 }
 
 .status-icon {
-  font-size: 16px;
+  font-size: 20px;
 }
 
 .photo-indicators {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
   width: 100%;
+  margin-top: 8px;
 }
 
 .photo-indicator {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 2px;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.7);
+  gap: 8px;
+  padding: 6px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  min-height: 32px;
 }
 
 .photo-indicator.checkin {
@@ -305,13 +322,14 @@
 }
 
 .day-photo {
-  width: 24px;
-  height: 24px;
+  width: 40px;
+  height: 40px;
   object-fit: cover;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
   transition: transform 0.2s ease;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
 }
 
 .day-photo:hover {
@@ -320,46 +338,125 @@
   position: relative;
 }
 
-.photo-time {
+.time-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.time-label {
   font-size: 10px;
   color: #666;
-  font-weight: 500;
-  flex: 1;
-  text-align: center;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.photo-time {
+  font-size: 12px;
+  color: #333;
+  font-weight: 600;
+  text-align: left;
 }
 
 .no-photo-indicator {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
   align-items: center;
-  padding: 4px;
-  background: rgba(255, 255, 255, 0.7);
-  border-radius: 6px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
   width: 100%;
+  margin-top: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .no-photo-text {
-  font-size: 10px;
+  font-size: 11px;
   color: #999;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .attendance-time {
-  font-size: 9px;
+  font-size: 11px;
   color: #666;
   text-align: center;
+  font-weight: 500;
 }
 
 .hours-indicator {
   background: #e3f2fd;
   color: #1976d2;
-  padding: 2px 6px;
-  border-radius: 10px;
-  font-size: 10px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
   font-weight: 600;
   text-align: center;
-  margin-top: 4px;
+  margin-top: 8px;
+  border: 1px solid #bbdefb;
+}
+
+/* Calendar Legend */
+.calendar-legend {
+  background: #f8f9fa;
+  padding: 15px 30px;
+  border-top: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.calendar-legend h4 {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  color: #333;
+  font-weight: 600;
+}
+
+.legend-items {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #666;
+}
+
+.legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.legend-color.present {
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  border-color: #28a745;
+}
+
+.legend-color.late {
+  background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+  border-color: #ffc107;
+}
+
+.legend-color.absent {
+  background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+  border-color: #dc3545;
+}
+
+.legend-color.weekend {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-color: #6c757d;
+}
+
+.legend-photo {
+  font-size: 14px;
 }
 
 /* Image Preview Modal */
@@ -475,6 +572,46 @@
   }
   
   .calendar-day {
+    min-height: 120px;
+    padding: 8px;
+  }
+  
+  .day-number {
+    font-size: 16px;
+  }
+  
+  .day-photo {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .photo-time {
+    font-size: 11px;
+  }
+  
+  .time-label {
+    font-size: 9px;
+  }
+  
+  .calendar-days {
+    gap: 8px;
+  }
+  
+  .calendar-weekdays {
+    gap: 8px;
+  }
+  
+  .calendar-legend {
+    padding: 12px 20px;
+  }
+  
+  .legend-items {
+    gap: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .calendar-day {
     min-height: 100px;
     padding: 6px;
   }
@@ -483,40 +620,46 @@
     font-size: 14px;
   }
   
-  .day-photo {
-    width: 20px;
-    height: 20px;
-  }
-  
-  .photo-time {
-    font-size: 9px;
-  }
-}
-
-@media (max-width: 480px) {
-  .calendar-day {
-    min-height: 80px;
-    padding: 4px;
-  }
-  
-  .day-number {
-    font-size: 12px;
-  }
-  
   .status-icon {
-    font-size: 14px;
+    font-size: 16px;
   }
   
   .day-photo {
-    width: 18px;
-    height: 18px;
+    width: 28px;
+    height: 28px;
   }
   
   .photo-time {
+    font-size: 10px;
+  }
+  
+  .time-label {
     font-size: 8px;
   }
   
   .monthly-stats {
     grid-template-columns: 1fr;
+  }
+  
+  .calendar-days {
+    gap: 6px;
+  }
+  
+  .calendar-weekdays {
+    gap: 6px;
+  }
+  
+  .calendar-legend {
+    padding: 10px 15px;
+  }
+  
+  .legend-items {
+    gap: 10px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .legend-item {
+    font-size: 11px;
   }
 }
