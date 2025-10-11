@@ -766,117 +766,6 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// GET /api/employee/:id/monthly-attendance-images - Get monthly attendance data with images for calendar view
-router.get('/:id/monthly-attendance-images', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { month, year } = req.query;
-    
-    console.log('📅 Fetching monthly attendance images for employee:', id);
-    console.log('Month:', month, 'Year:', year);
-    
-    const employee = await Employee.findById(id).select('-password');
-    
-    if (!employee) {
-      return res.status(404).json({ 
-        error: 'Not found',
-        message: 'Employee not found' 
-      });
-    }
-
-    // Calculate date range for the requested month
-    const startDate = new Date(year, month - 1, 1);
-    const endDate = new Date(year, month, 0); // Last day of the month
-    const startDateStr = startDate.toLocaleDateString('en-CA');
-    const endDateStr = endDate.toLocaleDateString('en-CA');
-    
-    console.log('Date range:', startDateStr, 'to', endDateStr);
-
-    // Filter attendance records for the requested month
-    const monthlyRecords = employee.attendance.records.filter(record => {
-      const recordDate = new Date(record.date);
-      return recordDate >= startDate && recordDate <= endDate;
-    });
-
-    // Create calendar data structure
-    const calendarData = [];
-    const daysInMonth = endDate.getDate();
-    
-    for (let day = 1; day <= daysInMonth; day++) {
-      const currentDate = new Date(year, month - 1, day);
-      const dateStr = currentDate.toLocaleDateString('en-CA');
-      
-      // Find attendance record for this date
-      const dayRecord = monthlyRecords.find(record => record.date === dateStr);
-      
-      const dayData = {
-        date: dateStr,
-        day: day,
-        dayOfWeek: currentDate.getDay(),
-        hasAttendance: !!dayRecord,
-        checkIn: dayRecord?.checkIn || null,
-        checkOut: dayRecord?.checkOut || null,
-        checkInImage: dayRecord?.checkInImage || null,
-        checkOutImage: dayRecord?.checkOutImage || null,
-        status: dayRecord?.status || 'Absent',
-        hours: dayRecord?.hours || 0,
-        isWeekend: currentDate.getDay() === 0 || currentDate.getDay() === 6
-      };
-      
-      calendarData.push(dayData);
-    }
-
-    // Calculate monthly statistics
-    const presentDays = monthlyRecords.filter(record => record.status === 'Present').length;
-    const lateDays = monthlyRecords.filter(record => record.status === 'Late').length;
-    const absentDays = monthlyRecords.filter(record => record.status === 'Absent').length;
-    const totalHours = monthlyRecords.reduce((sum, record) => sum + (record.hours || 0), 0);
-    const daysWithImages = monthlyRecords.filter(record => 
-      record.checkInImage || record.checkOutImage
-    ).length;
-
-    const monthlyStats = {
-      totalDays: daysInMonth,
-      presentDays,
-      lateDays,
-      absentDays,
-      totalHours: Math.round(totalHours * 100) / 100,
-      daysWithImages,
-      workingDays: calendarData.filter(day => !day.isWeekend).length
-    };
-
-    console.log('✅ Monthly attendance data retrieved:', {
-      employee: employee.name,
-      records: monthlyRecords.length,
-      daysWithImages,
-      totalHours: monthlyStats.totalHours
-    });
-
-    res.status(200).json({
-      success: true,
-      employee: {
-        id: employee._id,
-        name: employee.name,
-        email: employee.email,
-        department: employee.department,
-        position: employee.position,
-        employeeId: employee.employeeId
-      },
-      month: parseInt(month),
-      year: parseInt(year),
-      calendarData,
-      monthlyStats
-    });
-
-  } catch (error) {
-    console.error('❌ Error fetching monthly attendance images:', error);
-    res.status(500).json({ 
-      error: 'Internal server error',
-      message: 'Failed to fetch monthly attendance data' 
-    });
-  }
-});
-
 // GET /api/employee/:id/portal-data - Get employee portal data
 router.get('/:id/portal-data', async (req, res) => {
   try {
@@ -1292,6 +1181,18 @@ router.post('/:id/check-in', async (req, res) => {
       });
     }
 
+    // Keep only last 60 days of attendance records
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - 60);
+    const cutoffDateString = cutoffDate.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
+    
+    employee.attendance.records = employee.attendance.records.filter(record => {
+      if (!record.date) return false;
+      return record.date >= cutoffDateString;
+    });
+    
+    console.log(`📅 Kept ${employee.attendance.records.length} attendance records (last 60 days)`);
+
     // Update weekly summary - recalculate based on actual records
     const weekStart = getWeekStart(now);
     let weeklySummary = employee.attendance.weeklySummaries.find(summary => summary.weekStart === weekStart);
@@ -1492,6 +1393,18 @@ router.post('/:id/check-out', async (req, res) => {
         timestamp: now.toISOString()
       });
     }
+
+    // Keep only last 60 days of attendance records
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - 60);
+    const cutoffDateString = cutoffDate.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
+    
+    employee.attendance.records = employee.attendance.records.filter(record => {
+      if (!record.date) return false;
+      return record.date >= cutoffDateString;
+    });
+    
+    console.log(`📅 Kept ${employee.attendance.records.length} attendance records (last 60 days)`);
 
     // Update weekly summary - recalculate based on actual records
     const weekStart = getWeekStart(now);
@@ -1723,9 +1636,6 @@ router.post('/:id/check-in-with-image', upload.single('image'), async (req, res)
       });
     }
 
-    // Clean up old records (keep only last 60 days)
-    await cleanupOldAttendanceRecords(employee);
-
     // Update weekly and monthly summaries (same logic as original check-in)
     const weekStart = getWeekStart(now);
     let weeklySummary = employee.attendance.weeklySummaries.find(summary => summary.weekStart === weekStart);
@@ -1863,9 +1773,6 @@ router.post('/:id/check-out-with-image', upload.single('image'), async (req, res
       employee.attendance.records[existingRecordIndex].timestamp = now.toISOString();
       employee.attendance.records[existingRecordIndex].checkOutImage = imagePath;
     }
-
-    // Clean up old records (keep only last 60 days)
-    await cleanupOldAttendanceRecords(employee);
 
     // Update weekly and monthly summaries (same logic as original check-out)
     const weekStart = getWeekStart(now);
@@ -2301,65 +2208,6 @@ function getWeekStart(date) {
   const diff = d.getDate() - day + (day === 0 ? -6 : 1);
   const weekStart = new Date(d.setDate(diff));
   return weekStart.toISOString().split('T')[0];
-}
-
-// Helper function to clean up old attendance records (keep only last 60 days)
-async function cleanupOldAttendanceRecords(employee) {
-  try {
-    const today = new Date();
-    const sixtyDaysAgo = new Date(today);
-    sixtyDaysAgo.setDate(today.getDate() - 60);
-    const cutoffDate = sixtyDaysAgo.toISOString().split('T')[0];
-    
-    const originalCount = employee.attendance.records.length;
-    
-    // Filter records to keep only those within the last 60 days
-    employee.attendance.records = employee.attendance.records.filter(record => {
-      const recordDate = new Date(record.date);
-      const cutoff = new Date(cutoffDate);
-      return recordDate >= cutoff;
-    });
-    
-    const removedCount = originalCount - employee.attendance.records.length;
-    
-    if (removedCount > 0) {
-      console.log(`🧹 Cleaned up ${removedCount} old attendance records for ${employee.name} (kept last 60 days)`);
-      
-      // Also clean up old weekly and monthly summaries
-      const threeMonthsAgo = new Date(today);
-      threeMonthsAgo.setMonth(today.getMonth() - 3);
-      const summaryCutoff = threeMonthsAgo.toISOString().split('T')[0];
-      
-      // Clean weekly summaries
-      const originalWeeklyCount = employee.attendance.weeklySummaries.length;
-      employee.attendance.weeklySummaries = employee.attendance.weeklySummaries.filter(summary => {
-        const summaryDate = new Date(summary.weekStart);
-        const cutoff = new Date(summaryCutoff);
-        return summaryDate >= cutoff;
-      });
-      
-      // Clean monthly summaries
-      const originalMonthlyCount = employee.attendance.monthlySummaries.length;
-      employee.attendance.monthlySummaries = employee.attendance.monthlySummaries.filter(summary => {
-        const summaryDate = new Date(summary.month + '-01');
-        const cutoff = new Date(summaryCutoff);
-        return summaryDate >= cutoff;
-      });
-      
-      const weeklyRemoved = originalWeeklyCount - employee.attendance.weeklySummaries.length;
-      const monthlyRemoved = originalMonthlyCount - employee.attendance.monthlySummaries.length;
-      
-      if (weeklyRemoved > 0 || monthlyRemoved > 0) {
-        console.log(`🧹 Also cleaned up ${weeklyRemoved} weekly summaries and ${monthlyRemoved} monthly summaries`);
-      }
-      
-      // Save the employee with cleaned data
-      await employee.save();
-    }
-  } catch (error) {
-    console.error('❌ Error cleaning up old attendance records:', error);
-    // Don't throw error - this is cleanup, not critical functionality
-  }
 }
 
 // POST /api/employee/bulk-operations - Bulk employee operations
@@ -3290,6 +3138,106 @@ router.get('/:id/attendance-details', async (req, res) => {
     res.status(500).json({ 
       error: 'Internal server error',
       message: 'Failed to fetch attendance details' 
+    });
+  }
+});
+
+// GET /api/employee/monthly-attendance/:id - Get monthly attendance data with images for calendar view
+router.get('/monthly-attendance/:id', async (req, res) => {
+  try {
+    const { month, year } = req.query;
+    const employee = await Employee.findById(req.params.id).select('-password');
+    
+    if (!employee) {
+      return res.status(404).json({ 
+        error: 'Not found',
+        message: 'Employee not found' 
+      });
+    }
+    
+    console.log('📅 Monthly attendance request for:', {
+      employeeId: employee._id,
+      employeeName: employee.name,
+      requestedMonth: month,
+      requestedYear: year
+    });
+
+    // Default to current month and year if not specified
+    const currentDate = new Date();
+    const targetMonth = month ? parseInt(month) - 1 : currentDate.getMonth();
+    const targetYear = year ? parseInt(year) : currentDate.getFullYear();
+    
+    // Get attendance records for the specified month
+    const attendanceRecords = Array.isArray(employee.attendance?.records)
+      ? employee.attendance.records
+      : [];
+    const todayAttendance = employee.attendance?.today || null;
+
+    // Filter records for the target month and year
+    const monthlyRecords = attendanceRecords.filter(record => {
+      if (!record.date) return false;
+      const [recordYear, recordMonth] = record.date.split('-').map(Number);
+      return recordMonth - 1 === targetMonth && recordYear === targetYear;
+    });
+
+    // Create attendance data array with image information
+    const attendance = [];
+    
+    // Add today's attendance if it's in the target month
+    if (todayAttendance && todayAttendance.date) {
+      const [todayYear, todayMonth] = todayAttendance.date.split('-').map(Number);
+      if (todayMonth - 1 === targetMonth && todayYear === targetYear) {
+        attendance.push({
+          date: todayAttendance.date,
+          checkIn: todayAttendance.checkIn,
+          checkOut: todayAttendance.checkOut,
+          status: todayAttendance.status,
+          hours: todayAttendance.hours || 0,
+          checkInImage: todayAttendance.checkInImage,
+          checkOutImage: todayAttendance.checkOutImage,
+          isLate: todayAttendance.isLate || false,
+          timestamp: todayAttendance.timestamp
+        });
+      }
+    }
+
+    // Add historical records with images
+    monthlyRecords.forEach(record => {
+      attendance.push({
+        date: record.date,
+        checkIn: record.checkIn,
+        checkOut: record.checkOut,
+        status: record.status,
+        hours: record.hours || 0,
+        checkInImage: record.checkInImage,
+        checkOutImage: record.checkOutImage,
+        isLate: record.isLate || false,
+        timestamp: record.timestamp
+      });
+    });
+
+    // Sort by date
+    attendance.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    console.log(`📊 Found ${attendance.length} attendance records for ${employee.name} in ${targetMonth + 1}/${targetYear}`);
+
+    res.status(200).json({
+      attendance,
+      month: targetMonth + 1,
+      year: targetYear,
+      employee: {
+        id: employee._id,
+        name: employee.name,
+        employeeId: employee.employeeId,
+        department: employee.department
+      }
+    });
+
+  } catch (error) {
+    console.error('Error fetching monthly attendance:', error);
+    res.status(500).json({ 
+      error: 'Internal server error',
+      message: 'Failed to fetch monthly attendance data' 
     });
   }
 });

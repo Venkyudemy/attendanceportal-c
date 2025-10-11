@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './AttendanceImages.css';
-import AttendanceCalendar from './AttendanceCalendar';
+import EmployeeCalendar from './EmployeeCalendar';
 
 const AttendanceImages = () => {
   const [attendanceData, setAttendanceData] = useState([]);
@@ -16,7 +16,8 @@ const AttendanceImages = () => {
   });
   const [error, setError] = useState(null);
   const [debugInfo, setDebugInfo] = useState(null);
-  const [calendarModal, setCalendarModal] = useState({ isOpen: false, employeeId: null });
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   useEffect(() => {
     fetchAttendanceImages();
@@ -148,6 +149,16 @@ const AttendanceImages = () => {
     setSelectedDate(e.target.value);
   };
 
+  const handleEmployeeRowClick = (employee) => {
+    setSelectedEmployee(employee);
+    setIsCalendarOpen(true);
+  };
+
+  const handleCloseCalendar = () => {
+    setIsCalendarOpen(false);
+    setSelectedEmployee(null);
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'Present': return 'success';
@@ -156,15 +167,6 @@ const AttendanceImages = () => {
       case 'On Leave': return 'info';
       default: return 'secondary';
     }
-  };
-
-  const handleEmployeeRowClick = (employeeId) => {
-    console.log('📅 Opening calendar for employee:', employeeId);
-    setCalendarModal({ isOpen: true, employeeId });
-  };
-
-  const handleCloseCalendar = () => {
-    setCalendarModal({ isOpen: false, employeeId: null });
   };
 
   if (loading) {
@@ -333,7 +335,13 @@ const AttendanceImages = () => {
               </thead>
               <tbody>
                 {attendanceData.map((emp, index) => (
-                  <tr key={emp.id} className="employee-row" onClick={() => handleEmployeeRowClick(emp.id)}>
+                  <tr 
+                    key={emp.id}
+                    className="employee-row clickable"
+                    onClick={() => handleEmployeeRowClick(emp)}
+                    style={{ cursor: 'pointer' }}
+                    title="Click to view monthly attendance calendar"
+                  >
                     <td className="text-center">{index + 1}</td>
                     <td>
                       <div className="employee-info">
@@ -344,7 +352,6 @@ const AttendanceImages = () => {
                           <div className="employee-name">{emp.name}</div>
                           <div className="employee-meta">{emp.department}</div>
                           <div className="employee-id">ID: {emp.employeeId || emp.id.substring(0, 8)}</div>
-                          <div className="calendar-hint">📅 Click to view monthly calendar</div>
                         </div>
                       </div>
                     </td>
@@ -468,10 +475,10 @@ const AttendanceImages = () => {
         </div>
       )}
 
-      {/* Calendar Modal */}
-      <AttendanceCalendar
-        employeeId={calendarModal.employeeId}
-        isOpen={calendarModal.isOpen}
+      {/* Employee Calendar Modal */}
+      <EmployeeCalendar
+        employee={selectedEmployee}
+        isOpen={isCalendarOpen}
         onClose={handleCloseCalendar}
       />
     </div>
