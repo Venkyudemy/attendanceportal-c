@@ -209,7 +209,7 @@
 }
 
 .calendar-day {
-  min-height: 150px;
+  min-height: 180px;
   border: 2px solid #e0e0e0;
   border-radius: 8px;
   padding: 12px;
@@ -349,15 +349,15 @@
 }
 
 .day-photo {
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   object-fit: cover;
   border-radius: 8px;
   cursor: pointer;
   transition: transform 0.2s ease;
   border: 3px solid rgba(0, 0, 0, 0.2);
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
 }
 
 .day-photo:hover {
@@ -601,7 +601,7 @@
   }
   
   .calendar-day {
-    min-height: 140px;
+    min-height: 160px;
     padding: 10px;
   }
   
@@ -610,8 +610,8 @@
   }
   
   .day-photo {
-    width: 45px;
-    height: 45px;
+    width: 50px;
+    height: 50px;
   }
   
   .photo-time {
@@ -619,7 +619,7 @@
   }
   
   .time-label {
-    font-size: 9px;
+    font-size: 10px;
   }
   
   .calendar-legend {
@@ -633,7 +633,7 @@
 
 @media (max-width: 480px) {
   .calendar-day {
-    min-height: 120px;
+    min-height: 140px;
     padding: 8px;
   }
   
@@ -646,8 +646,8 @@
   }
   
   .day-photo {
-    width: 40px;
-    height: 40px;
+    width: 45px;
+    height: 45px;
   }
   
   .photo-time {
@@ -655,7 +655,7 @@
   }
   
   .time-label {
-    font-size: 8px;
+    font-size: 9px;
   }
   
   .monthly-stats {
