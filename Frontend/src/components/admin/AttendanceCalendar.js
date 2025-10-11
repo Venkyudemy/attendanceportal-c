@@ -215,82 +215,69 @@ const AttendanceCalendar = ({ employeeId, isOpen, onClose }) => {
                 {calendarData.calendarData.map((dayData, index) => (
                   <div 
                     key={index} 
-                    className={`calendar-day ${getStatusColor(dayData.status, dayData.isWeekend)} ${
-                      dayData.hasAttendance ? 'has-attendance' : 'no-attendance'
-                    }`}
+                    className={`calendar-day ${getStatusColor(dayData.status, dayData.isWeekend)}`}
                   >
-                    <div className="day-number">
-                      {dayData.day}
-                      {dayData.isWeekend && !dayData.hasAttendance && (
-                        <div className="weekend-label">Weekend</div>
-                      )}
-                      {dayData.status === 'Late' && dayData.checkIn && (
-                        <div className="late-label">Late In {formatTime(dayData.checkIn)}</div>
-                      )}
-                      {dayData.status === 'Holiday' && (
-                        <div className="holiday-label">Holiday</div>
-                      )}
-                    </div>
+                    {/* Day Number */}
+                    <div className="day-number">{dayData.day}</div>
                     
-                     {dayData.hasAttendance && (
-                       <div className="attendance-info">
-                         {/* Status and Time Display */}
-                         <div className="status-time-display">
-                           <span className="status-text">
-                             {dayData.status === 'Late' && dayData.checkIn && 
-                               `Late In ${formatTime(dayData.checkIn)}`
-                             }
-                             {dayData.status === 'Present' && 'Present'}
-                             {dayData.status === 'Absent' && 'Absent'}
-                             {dayData.status === 'On Leave' && 'On Leave'}
-                           </span>
-                         </div>
-                         
-                         {/* Photo Grid - Show BOTH check-in and check-out images */}
-                         {(dayData.checkInImage || dayData.checkOutImage) && (
-                           <div className="photo-grid">
-                             {dayData.checkInImage && (
-                               <img 
-                                 src={dayData.checkInImage} 
-                                 alt="Check-in"
-                                 className="calendar-photo checkin-photo"
-                                 onClick={() => setPreviewImage({
-                                   src: dayData.checkInImage,
-                                   type: 'Check-in',
-                                   time: dayData.checkIn,
-                                   date: dayData.date
-                                 })}
-                                 title={`Check-in: ${formatTime(dayData.checkIn)}`}
-                               />
-                             )}
-                             
-                             {dayData.checkOutImage && (
-                               <img 
-                                 src={dayData.checkOutImage} 
-                                 alt="Check-out"
-                                 className="calendar-photo checkout-photo"
-                                 onClick={() => setPreviewImage({
-                                   src: dayData.checkOutImage,
-                                   type: 'Check-out',
-                                   time: dayData.checkOut,
-                                   date: dayData.date
-                                 })}
-                                 title={`Check-out: ${formatTime(dayData.checkOut)}`}
-                               />
-                             )}
-                           </div>
-                         )}
-                         
-                         {/* Show time info if no photos */}
-                         {!dayData.checkInImage && !dayData.checkOutImage && (
-                           <div className="time-info-only">
-                             {dayData.checkIn && `In: ${formatTime(dayData.checkIn)}`}
-                             {dayData.checkIn && dayData.checkOut && ' • '}
-                             {dayData.checkOut && `Out: ${formatTime(dayData.checkOut)}`}
-                           </div>
-                         )}
-                       </div>
-                     )}
+                    {/* Status Text */}
+                    {dayData.hasAttendance && (
+                      <div className="status-text">
+                        {dayData.status === 'Late' && dayData.checkIn && 
+                          `Late In ${formatTime(dayData.checkIn)}`
+                        }
+                        {dayData.status === 'Present' && 'Present'}
+                        {dayData.status === 'Absent' && 'Absent'}
+                        {dayData.status === 'On Leave' && 'On Leave'}
+                      </div>
+                    )}
+                    
+                    {/* Weekend Label */}
+                    {dayData.isWeekend && !dayData.hasAttendance && (
+                      <div className="weekend-text">Weekend</div>
+                    )}
+                    
+                    {/* Photo Grid - Show BOTH check-in and check-out images */}
+                    {dayData.hasAttendance && (
+                      <div className="photos-container">
+                        {/* Check-in Photo */}
+                        {dayData.checkInImage && (
+                          <img 
+                            src={dayData.checkInImage} 
+                            alt="Check-in"
+                            className="day-photo checkin-photo"
+                            onClick={() => setPreviewImage({
+                              src: dayData.checkInImage,
+                              type: 'Check-in',
+                              time: dayData.checkIn,
+                              date: dayData.date
+                            })}
+                            title={`Check-in: ${formatTime(dayData.checkIn)}`}
+                          />
+                        )}
+                        
+                        {/* Check-out Photo */}
+                        {dayData.checkOutImage && (
+                          <img 
+                            src={dayData.checkOutImage} 
+                            alt="Check-out"
+                            className="day-photo checkout-photo"
+                            onClick={() => setPreviewImage({
+                              src: dayData.checkOutImage,
+                              type: 'Check-out',
+                              time: dayData.checkOut,
+                              date: dayData.date
+                            })}
+                            title={`Check-out: ${formatTime(dayData.checkOut)}`}
+                          />
+                        )}
+                        
+                        {/* Show checkmark if both photos exist */}
+                        {(dayData.checkInImage || dayData.checkOutImage) && (
+                          <div className="photo-checkmark">✓</div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
