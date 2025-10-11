@@ -270,6 +270,36 @@
   margin-bottom: 10px;
   text-align: center;
   flex-shrink: 0;
+  position: relative;
+}
+
+.weekend-label {
+  font-size: 10px;
+  color: #666;
+  font-weight: 500;
+  margin-top: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.late-label {
+  font-size: 10px;
+  color: #856404;
+  font-weight: 600;
+  margin-top: 2px;
+  background: #fff3cd;
+  padding: 2px 4px;
+  border-radius: 3px;
+  border: 1px solid #ffeaa7;
+}
+
+.holiday-label {
+  font-size: 10px;
+  color: #6c757d;
+  font-weight: 600;
+  margin-top: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .attendance-info {

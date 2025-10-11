@@ -76,6 +76,7 @@ const AttendanceCalendar = ({ employeeId, isOpen, onClose }) => {
       case 'Late': return 'late';
       case 'Absent': return 'absent';
       case 'On Leave': return 'leave';
+      case 'Holiday': return 'weekend'; // Treat holidays like weekends
       default: return 'absent';
     }
   };
@@ -86,6 +87,7 @@ const AttendanceCalendar = ({ employeeId, isOpen, onClose }) => {
       case 'Late': return '⏰';
       case 'Absent': return '❌';
       case 'On Leave': return '🏖️';
+      case 'Holiday': return '🎉';
       default: return '❓';
     }
   };
@@ -153,6 +155,32 @@ const AttendanceCalendar = ({ employeeId, isOpen, onClose }) => {
 
         {calendarData && !loading && !error && (
           <>
+            <div className="calendar-legend">
+              <h4>📋 Calendar Legend:</h4>
+              <div className="legend-items">
+                <div className="legend-item">
+                  <div className="legend-color present"></div>
+                  <span>✅ Present</span>
+                </div>
+                <div className="legend-item">
+                  <div className="legend-color late"></div>
+                  <span>⏰ Late</span>
+                </div>
+                <div className="legend-item">
+                  <div className="legend-color absent"></div>
+                  <span>❌ Absent</span>
+                </div>
+                <div className="legend-item">
+                  <div className="legend-color weekend"></div>
+                  <span>🏖️ Weekend/Holiday</span>
+                </div>
+                <div className="legend-item">
+                  <span className="legend-photo">📸</span>
+                  <span>Has Photos</span>
+                </div>
+              </div>
+            </div>
+
             <div className="monthly-stats">
               <div className="stat-card">
                 <div className="stat-number">{calendarData.monthlyStats.presentDays}</div>
@@ -176,32 +204,6 @@ const AttendanceCalendar = ({ employeeId, isOpen, onClose }) => {
               </div>
             </div>
 
-            <div className="calendar-legend">
-              <h4>📋 Calendar Legend:</h4>
-              <div className="legend-items">
-                <div className="legend-item">
-                  <div className="legend-color present"></div>
-                  <span>✅ Present</span>
-                </div>
-                <div className="legend-item">
-                  <div className="legend-color late"></div>
-                  <span>⏰ Late</span>
-                </div>
-                <div className="legend-item">
-                  <div className="legend-color absent"></div>
-                  <span>❌ Absent</span>
-                </div>
-                <div className="legend-item">
-                  <div className="legend-color weekend"></div>
-                  <span>🏖️ Weekend</span>
-                </div>
-                <div className="legend-item">
-                  <span className="legend-photo">📸</span>
-                  <span>Has Photos</span>
-                </div>
-              </div>
-            </div>
-
             <div className="calendar-grid">
               <div className="calendar-weekdays">
                 {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
@@ -217,7 +219,18 @@ const AttendanceCalendar = ({ employeeId, isOpen, onClose }) => {
                       dayData.hasAttendance ? 'has-attendance' : 'no-attendance'
                     }`}
                   >
-                    <div className="day-number">{dayData.day}</div>
+                    <div className="day-number">
+                      {dayData.day}
+                      {dayData.isWeekend && !dayData.hasAttendance && (
+                        <div className="weekend-label">Weekend</div>
+                      )}
+                      {dayData.status === 'Late' && dayData.checkIn && (
+                        <div className="late-label">Late In {formatTime(dayData.checkIn)}</div>
+                      )}
+                      {dayData.status === 'Holiday' && (
+                        <div className="holiday-label">Holiday</div>
+                      )}
+                    </div>
                     
                     {dayData.hasAttendance && (
                       <div className="attendance-info">
