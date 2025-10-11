@@ -257,11 +257,11 @@ export const getAdminEmployeesOnLeave = async () => {
 };
 
 export const calculatePayroll = async (queryParams) => {
-  return apiCall(`/employee/payroll/calculate?${queryParams}`);
+  return apiCall(`/employee/payroll/calculate-fixed?${queryParams}`);
 };
 
 export const exportPayroll = async (queryParams) => {
-  const url = `${getApiBaseUrl()}/employee/payroll/export?${queryParams}`;
+  const url = `${getApiBaseUrl()}/employee/payroll/export-fixed?${queryParams}`;
   
   const response = await fetch(url, {
     method: 'GET',

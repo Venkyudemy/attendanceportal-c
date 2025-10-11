@@ -4039,4 +4039,8 @@ router.post('/admin/sync-leave-balance-structure', async (req, res) => {
   }
 });
 
+// Import and use the fixed payroll calculation
+const payrollFixedRouter = require('./payroll-fixed');
+router.use('/payroll', payrollFixedRouter);
+
 module.exports = router;
