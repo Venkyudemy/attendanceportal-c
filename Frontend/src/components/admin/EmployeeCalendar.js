@@ -231,9 +231,8 @@ const EmployeeCalendar = ({ employee, isOpen, onClose }) => {
         <div className="calendar-grid">
           <div className="calendar-header-row">
             {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, index) => (
-              <div key={day} className="day-header" title={`Column ${index}: ${day}`}>
+              <div key={day} className="day-header" title={`${day}`}>
                 <div className="header-day">{day}</div>
-                <div className="header-index">({index})</div>
               </div>
             ))}
           </div>
@@ -253,7 +252,7 @@ const EmployeeCalendar = ({ employee, isOpen, onClose }) => {
                     border: isEmpty ? 'none' : `2px solid ${borderColor}`,
                     backgroundColor: backgroundColor
                   }}
-                  title={!isEmpty && date ? `${date.toDateString()} - Column ${index % 7}` : 'Empty day'}
+                  title={!isEmpty && date ? `${date.toDateString()}` : 'Empty day'}
                   onClick={() => {
                     if (date && attendance) {
                       setSelectedDay({ date: date, attendance });
@@ -262,9 +261,8 @@ const EmployeeCalendar = ({ employee, isOpen, onClose }) => {
                 >
                   {!isEmpty && (
                     <>
-                      <div className="day-number" title={`Day ${date.getDate()} - Column ${index % 7}`}>
+                      <div className="day-number" title={`Day ${date.getDate()}`}>
                         {date.getDate()}
-                        <div className="day-column-indicator">({index % 7})</div>
                       </div>
                       {attendance && (
                         <div className="day-attendance">
