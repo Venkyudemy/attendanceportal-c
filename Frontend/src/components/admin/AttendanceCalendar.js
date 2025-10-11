@@ -238,60 +238,58 @@ const AttendanceCalendar = ({ employeeId, isOpen, onClose }) => {
                           <span className="status-icon">{getStatusIcon(dayData.status)}</span>
                         </div>
                         
-                        {(dayData.checkInImage || dayData.checkOutImage) && (
-                          <div className="photo-indicators">
-                            {dayData.checkInImage && (
-                              <div className="photo-indicator checkin">
-                                <img 
-                                  src={dayData.checkInImage} 
-                                  alt="Check-in"
-                                  className="day-photo"
-                                  onClick={() => setPreviewImage({
-                                    src: dayData.checkInImage,
-                                    type: 'Check-in',
-                                    time: dayData.checkIn,
-                                    date: dayData.date
-                                  })}
-                                />
-                                <div className="time-info">
-                                  <span className="time-label">IN</span>
-                                  <span className="photo-time">{formatTime(dayData.checkIn)}</span>
-                                </div>
+                        <div className="photo-indicators">
+                          {dayData.checkInImage && (
+                            <div className="photo-indicator checkin">
+                              <img 
+                                src={dayData.checkInImage} 
+                                alt="Check-in"
+                                className="day-photo"
+                                onClick={() => setPreviewImage({
+                                  src: dayData.checkInImage,
+                                  type: 'Check-in',
+                                  time: dayData.checkIn,
+                                  date: dayData.date
+                                })}
+                              />
+                              <div className="time-info">
+                                <span className="time-label">CHECK-IN</span>
+                                <span className="photo-time">{formatTime(dayData.checkIn)}</span>
                               </div>
-                            )}
-                            
-                            {dayData.checkOutImage && (
-                              <div className="photo-indicator checkout">
-                                <img 
-                                  src={dayData.checkOutImage} 
-                                  alt="Check-out"
-                                  className="day-photo"
-                                  onClick={() => setPreviewImage({
-                                    src: dayData.checkOutImage,
-                                    type: 'Check-out',
-                                    time: dayData.checkOut,
-                                    date: dayData.date
-                                  })}
-                                />
-                                <div className="time-info">
-                                  <span className="time-label">OUT</span>
-                                  <span className="photo-time">{formatTime(dayData.checkOut)}</span>
-                                </div>
+                            </div>
+                          )}
+                          
+                          {dayData.checkOutImage && (
+                            <div className="photo-indicator checkout">
+                              <img 
+                                src={dayData.checkOutImage} 
+                                alt="Check-out"
+                                className="day-photo"
+                                onClick={() => setPreviewImage({
+                                  src: dayData.checkOutImage,
+                                  type: 'Check-out',
+                                  time: dayData.checkOut,
+                                  date: dayData.date
+                                })}
+                              />
+                              <div className="time-info">
+                                <span className="time-label">CHECK-OUT</span>
+                                <span className="photo-time">{formatTime(dayData.checkOut)}</span>
                               </div>
-                            )}
-                          </div>
-                        )}
-                        
-                        {!dayData.checkInImage && !dayData.checkOutImage && dayData.hasAttendance && (
-                          <div className="no-photo-indicator">
-                            <span className="no-photo-text">No Photos</span>
-                            <span className="attendance-time">
-                              {dayData.checkIn && formatTime(dayData.checkIn)}
-                              {dayData.checkIn && dayData.checkOut && ' - '}
-                              {dayData.checkOut && formatTime(dayData.checkOut)}
-                            </span>
-                          </div>
-                        )}
+                            </div>
+                          )}
+                          
+                          {!dayData.checkInImage && !dayData.checkOutImage && dayData.hasAttendance && (
+                            <div className="no-photo-indicator">
+                              <span className="no-photo-text">No Photos Available</span>
+                              <span className="attendance-time">
+                                {dayData.checkIn && `In: ${formatTime(dayData.checkIn)}`}
+                                {dayData.checkIn && dayData.checkOut && ' • '}
+                                {dayData.checkOut && `Out: ${formatTime(dayData.checkOut)}`}
+                              </span>
+                            </div>
+                          )}
+                        </div>
                         
                         {dayData.hours > 0 && (
                           <div className="hours-indicator">

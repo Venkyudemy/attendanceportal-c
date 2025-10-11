@@ -209,10 +209,10 @@
 }
 
 .calendar-day {
-  min-height: 130px;
+  min-height: 150px;
   border: 2px solid #e0e0e0;
   border-radius: 8px;
-  padding: 10px;
+  padding: 12px;
   background: white;
   transition: all 0.3s ease;
   position: relative;
@@ -324,20 +324,20 @@
 .photo-indicators {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   width: 100%;
-  margin-top: 8px;
+  margin-top: 10px;
 }
 
 .photo-indicator {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  min-height: 32px;
+  gap: 8px;
+  padding: 6px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+  min-height: 40px;
 }
 
 .photo-indicator.checkin {
@@ -349,14 +349,15 @@
 }
 
 .day-photo {
-  width: 36px;
-  height: 36px;
+  width: 50px;
+  height: 50px;
   object-fit: cover;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   transition: transform 0.2s ease;
-  border: 2px solid rgba(0, 0, 0, 0.1);
+  border: 3px solid rgba(0, 0, 0, 0.2);
   flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .day-photo:hover {
@@ -373,15 +374,16 @@
 }
 
 .time-label {
-  font-size: 10px;
+  font-size: 11px;
   color: #666;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  margin-bottom: 2px;
 }
 
 .photo-time {
-  font-size: 12px;
+  font-size: 13px;
   color: #333;
   font-weight: 600;
   text-align: center;
@@ -599,8 +601,8 @@
   }
   
   .calendar-day {
-    min-height: 120px;
-    padding: 8px;
+    min-height: 140px;
+    padding: 10px;
   }
   
   .day-number {
@@ -608,12 +610,12 @@
   }
   
   .day-photo {
-    width: 32px;
-    height: 32px;
+    width: 45px;
+    height: 45px;
   }
   
   .photo-time {
-    font-size: 11px;
+    font-size: 12px;
   }
   
   .time-label {
@@ -631,8 +633,8 @@
 
 @media (max-width: 480px) {
   .calendar-day {
-    min-height: 100px;
-    padding: 6px;
+    min-height: 120px;
+    padding: 8px;
   }
   
   .day-number {
@@ -644,12 +646,12 @@
   }
   
   .day-photo {
-    width: 28px;
-    height: 28px;
+    width: 40px;
+    height: 40px;
   }
   
   .photo-time {
-    font-size: 10px;
+    font-size: 11px;
   }
   
   .time-label {
