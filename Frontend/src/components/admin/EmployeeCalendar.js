@@ -78,12 +78,22 @@ const EmployeeCalendar = ({ employee, isOpen, onClose }) => {
     
     // Add empty cells for days before the first day of the month
     for (let i = 0; i < startingDayOfWeek; i++) {
-      days.push(null);
+      days.push({ date: null, isEmpty: true });
     }
     
     // Add days of the month
     for (let day = 1; day <= daysInMonth; day++) {
-      days.push(new Date(year, month, day));
+      const dayDate = new Date(year, month, day);
+      const attendance = getAttendanceForDate(dayDate);
+      const isWeekend = dayDate.getDay() === 0 || dayDate.getDay() === 6;
+      
+      days.push({ 
+        date: dayDate, 
+        isEmpty: false,
+        attendance: attendance,
+        isWeekend: isWeekend,
+        isToday: formatDate(dayDate) === formatDate(new Date())
+      });
     }
     
     return days;
@@ -97,12 +107,39 @@ const EmployeeCalendar = ({ employee, isOpen, onClose }) => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'Present': return '#28a745';
-      case 'Late': return '#ffc107';
-      case 'Absent': return '#dc3545';
-      case 'On Leave': return '#17a2b8';
-      default: return '#6c757d';
+      case 'Present': return '#28a745'; // Green
+      case 'Late': return '#ffc107'; // Yellow
+      case 'Absent': return '#dc3545'; // Red
+      case 'On Leave': return '#17a2b8'; // Blue
+      case 'Holiday': return '#fd7e14'; // Orange
+      default: return '#6c757d'; // Gray
     }
+  };
+
+  const getDayBorderColor = (dayData) => {
+    if (dayData.isEmpty) return 'transparent';
+    if (dayData.isWeekend) return '#e9ecef'; // Light gray for weekends
+    if (dayData.attendance) {
+      return getStatusColor(dayData.attendance.status);
+    }
+    return 'transparent'; // No attendance data
+  };
+
+  const getDayBackgroundColor = (dayData) => {
+    if (dayData.isEmpty) return 'transparent';
+    if (dayData.isToday) return '#e3f2fd'; // Light blue for today
+    if (dayData.isWeekend) return '#f8f9fa'; // Light gray for weekends
+    if (dayData.attendance) {
+      switch (dayData.attendance.status) {
+        case 'Present': return '#d4edda'; // Light green
+        case 'Late': return '#fff3cd'; // Light yellow
+        case 'Absent': return '#f8d7da'; // Light red
+        case 'On Leave': return '#d1ecf1'; // Light blue
+        case 'Holiday': return '#ffeaa7'; // Light orange
+        default: return '#f8f9fa'; // Light gray
+      }
+    }
+    return '#ffffff'; // White for no data
   };
 
   const navigateMonth = (direction) => {
@@ -164,6 +201,29 @@ const EmployeeCalendar = ({ employee, isOpen, onClose }) => {
           </div>
         )}
 
+        <div className="calendar-legend">
+          <div className="legend-item">
+            <div className="legend-color present"></div>
+            <span>Present</span>
+          </div>
+          <div className="legend-item">
+            <div className="legend-color late"></div>
+            <span>Late</span>
+          </div>
+          <div className="legend-item">
+            <div className="legend-color absent"></div>
+            <span>Absent</span>
+          </div>
+          <div className="legend-item">
+            <div className="legend-color leave"></div>
+            <span>Leave/Holiday</span>
+          </div>
+          <div className="legend-item">
+            <div className="legend-color weekend"></div>
+            <span>Weekend</span>
+          </div>
+        </div>
+
         <div className="calendar-grid">
           <div className="calendar-header-row">
             {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
@@ -172,24 +232,29 @@ const EmployeeCalendar = ({ employee, isOpen, onClose }) => {
           </div>
           
           <div className="calendar-body">
-            {days.map((day, index) => {
-              const attendance = getAttendanceForDate(day);
-              const isToday = day && formatDate(day) === formatDate(new Date());
+            {days.map((dayData, index) => {
+              const { date, isEmpty, attendance, isWeekend, isToday } = dayData;
               const hasImages = attendance && (attendance.checkInImage || attendance.checkOutImage);
+              const borderColor = getDayBorderColor(dayData);
+              const backgroundColor = getDayBackgroundColor(dayData);
               
               return (
                 <div
                   key={index}
-                  className={`calendar-day ${!day ? 'empty' : ''} ${isToday ? 'today' : ''} ${hasImages ? 'has-images' : ''}`}
+                  className={`calendar-day ${isEmpty ? 'empty' : ''} ${isToday ? 'today' : ''} ${hasImages ? 'has-images' : ''} ${isWeekend ? 'weekend' : ''}`}
+                  style={{
+                    border: isEmpty ? 'none' : `2px solid ${borderColor}`,
+                    backgroundColor: backgroundColor
+                  }}
                   onClick={() => {
-                    if (day && attendance) {
-                      setSelectedDay({ date: day, attendance });
+                    if (date && attendance) {
+                      setSelectedDay({ date: date, attendance });
                     }
                   }}
                 >
-                  {day && (
+                  {!isEmpty && (
                     <>
-                      <div className="day-number">{day.getDate()}</div>
+                      <div className="day-number">{date.getDate()}</div>
                       {attendance && (
                         <div className="day-attendance">
                           {attendance.checkInImage && (
@@ -208,6 +273,11 @@ const EmployeeCalendar = ({ employee, isOpen, onClose }) => {
                               backgroundColor: getStatusColor(attendance.status) 
                             }}
                           ></div>
+                        </div>
+                      )}
+                      {!attendance && !isWeekend && (
+                        <div className="day-attendance">
+                          <div className="status-dot" style={{ backgroundColor: '#e9ecef' }}></div>
                         </div>
                       )}
                     </>

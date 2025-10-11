@@ -50,12 +50,16 @@ This feature adds a comprehensive monthly calendar view for employee attendance,
 
 ### Visual Indicators
 - **📸 Icons**: Days with camera captures (check-in or check-out)
-- **Status Dots**: Color-coded attendance status
-  - 🟢 Green: Present
-  - 🟡 Yellow: Late
-  - 🔴 Red: Absent
-  - 🔵 Blue: On Leave
-- **Today Highlight**: Current date is highlighted
+- **Color-Coded Borders**: Attendance status with colored borders
+  - 🟢 **Green Border**: Present
+  - 🟡 **Yellow Border**: Late
+  - 🔴 **Red Border**: Absent
+  - 🔵 **Blue Border**: On Leave/Holiday
+  - ⚪ **Light Gray Border**: Weekend
+  - ⚫ **No Border**: No attendance data
+- **Background Colors**: Light background colors matching border colors
+- **Today Highlight**: Current date has blue border and light blue background
+- **Legend**: Color-coded legend showing all status types
 - **Hover Effects**: Interactive feedback on clickable elements
 
 ## 📱 Responsive Design
