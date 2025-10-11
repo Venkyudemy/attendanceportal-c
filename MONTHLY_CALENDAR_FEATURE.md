@@ -86,9 +86,10 @@ This feature adds a comprehensive monthly calendar view for employee attendance,
 ```
 EmployeeCalendar.js
 ├── Monthly navigation
-├── Calendar grid generation
+├── Calendar grid generation with proper alignment
 ├── Attendance data integration
 ├── Day details modal
+├── Visual debugging indicators
 └── Responsive styling
 
 AttendanceImages.js
@@ -97,6 +98,12 @@ AttendanceImages.js
 ├── Visual feedback
 └── Enhanced styling
 ```
+
+### Calendar Alignment System
+- **Proper Week Alignment**: Days correctly aligned with weekday columns
+- **Visual Indicators**: Column numbers shown in headers and day cells
+- **Debug Information**: Tooltips showing exact column positions
+- **Tested Logic**: Verified calendar logic with comprehensive tests
 
 ### Backend Architecture
 ```

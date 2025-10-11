@@ -72,13 +72,15 @@ const EmployeeCalendar = ({ employee, isOpen, onClose }) => {
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
     const daysInMonth = lastDay.getDate();
+    
+    // Get the correct starting day of the week (0 = Sunday, 1 = Monday, etc.)
     const startingDayOfWeek = firstDay.getDay();
-
+    
     const days = [];
     
     // Add empty cells for days before the first day of the month
     for (let i = 0; i < startingDayOfWeek; i++) {
-      days.push({ date: null, isEmpty: true });
+      days.push({ date: null, isEmpty: true, dayOfWeek: i });
     }
     
     // Add days of the month
@@ -86,13 +88,15 @@ const EmployeeCalendar = ({ employee, isOpen, onClose }) => {
       const dayDate = new Date(year, month, day);
       const attendance = getAttendanceForDate(dayDate);
       const isWeekend = dayDate.getDay() === 0 || dayDate.getDay() === 6;
+      const dayOfWeek = dayDate.getDay();
       
       days.push({ 
         date: dayDate, 
         isEmpty: false,
         attendance: attendance,
         isWeekend: isWeekend,
-        isToday: formatDate(dayDate) === formatDate(new Date())
+        isToday: formatDate(dayDate) === formatDate(new Date()),
+        dayOfWeek: dayOfWeek
       });
     }
     
@@ -226,14 +230,17 @@ const EmployeeCalendar = ({ employee, isOpen, onClose }) => {
 
         <div className="calendar-grid">
           <div className="calendar-header-row">
-            {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-              <div key={day} className="day-header">{day}</div>
+            {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, index) => (
+              <div key={day} className="day-header" title={`Column ${index}: ${day}`}>
+                <div className="header-day">{day}</div>
+                <div className="header-index">({index})</div>
+              </div>
             ))}
           </div>
           
           <div className="calendar-body">
             {days.map((dayData, index) => {
-              const { date, isEmpty, attendance, isWeekend, isToday } = dayData;
+              const { date, isEmpty, attendance, isWeekend, isToday, dayOfWeek } = dayData;
               const hasImages = attendance && (attendance.checkInImage || attendance.checkOutImage);
               const borderColor = getDayBorderColor(dayData);
               const backgroundColor = getDayBackgroundColor(dayData);
@@ -246,6 +253,7 @@ const EmployeeCalendar = ({ employee, isOpen, onClose }) => {
                     border: isEmpty ? 'none' : `2px solid ${borderColor}`,
                     backgroundColor: backgroundColor
                   }}
+                  title={!isEmpty && date ? `${date.toDateString()} - Column ${index % 7}` : 'Empty day'}
                   onClick={() => {
                     if (date && attendance) {
                       setSelectedDay({ date: date, attendance });
@@ -254,7 +262,10 @@ const EmployeeCalendar = ({ employee, isOpen, onClose }) => {
                 >
                   {!isEmpty && (
                     <>
-                      <div className="day-number">{date.getDate()}</div>
+                      <div className="day-number" title={`Day ${date.getDate()} - Column ${index % 7}`}>
+                        {date.getDate()}
+                        <div className="day-column-indicator">({index % 7})</div>
+                      </div>
                       {attendance && (
                         <div className="day-attendance">
                           {attendance.checkInImage && (
