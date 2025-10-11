@@ -18,9 +18,9 @@
   background: white;
   border-radius: 16px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  max-width: 1200px;
+  max-width: 1400px;
   width: 100%;
-  max-height: 90vh;
+  height: 95vh;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -181,8 +181,10 @@
 /* Calendar Grid */
 .calendar-grid {
   flex: 1;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   padding: 20px 30px;
+  max-height: calc(95vh - 400px);
 }
 
 .calendar-weekdays {
@@ -209,17 +211,17 @@
 }
 
 .calendar-day {
-  min-height: 120px;
+  min-height: 180px;
   border: 2px solid #e0e0e0;
-  border-radius: 6px;
-  padding: 8px;
+  border-radius: 8px;
+  padding: 12px;
   background: white;
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 /* Day Status Colors - Clean and Simple */
@@ -251,42 +253,43 @@
 
 .day-number {
   font-weight: 700;
-  font-size: 16px;
+  font-size: 20px;
   color: #333;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .status-text {
-  font-size: 10px;
+  font-size: 12px;
   color: #333;
   font-weight: 600;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   line-height: 1.2;
 }
 
 .weekend-text {
-  font-size: 10px;
+  font-size: 12px;
   color: #666;
   font-weight: 500;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 .photos-container {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
   align-items: center;
   position: relative;
+  margin-top: 4px;
 }
 
 .day-photo {
-  width: 30px;
-  height: 30px;
+  width: 45px;
+  height: 45px;
   object-fit: cover;
-  border-radius: 3px;
+  border-radius: 4px;
   cursor: pointer;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .checkin-photo {
@@ -299,14 +302,14 @@
 
 .photo-checkmark {
   position: absolute;
-  bottom: -2px;
-  right: -2px;
+  bottom: -3px;
+  right: -3px;
   background: #28a745;
   color: white;
   border-radius: 50%;
-  width: 12px;
-  height: 12px;
-  font-size: 8px;
+  width: 16px;
+  height: 16px;
+  font-size: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -506,21 +509,21 @@
   }
   
   .calendar-day {
-    min-height: 100px;
-    padding: 6px;
+    min-height: 140px;
+    padding: 8px;
   }
   
   .day-number {
-    font-size: 14px;
+    font-size: 16px;
   }
   
   .day-photo {
-    width: 25px;
-    height: 25px;
+    width: 35px;
+    height: 35px;
   }
   
   .status-text {
-    font-size: 9px;
+    font-size: 10px;
   }
   
   .calendar-legend {
@@ -534,21 +537,21 @@
 
 @media (max-width: 480px) {
   .calendar-day {
-    min-height: 90px;
-    padding: 5px;
+    min-height: 120px;
+    padding: 6px;
   }
   
   .day-number {
-    font-size: 12px;
+    font-size: 14px;
   }
   
   .day-photo {
-    width: 22px;
-    height: 22px;
+    width: 30px;
+    height: 30px;
   }
   
   .status-text {
-    font-size: 8px;
+    font-size: 9px;
   }
   
   .monthly-stats {
